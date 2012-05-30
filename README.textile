@@ -64,6 +64,18 @@ ID CODE       NAME
    2 Tuneeca Store        4:tuneecadefault:Tuneeca Default 5:tuneecafb:Tuneeca Facebook 6:tuneecam:Tuneeca Mobile
 
 
+h2. Category Management
+
+h3. List Categories
+
+bc. ./cat-list.php 
+Loading Magento... OK.
+List categories
+ 1 --                      Root Catalog
+ 2 A-                      . Default Category
+ 3 AC tas                  . . Tas
+
+
 h2. Product Management
 
 h3. List All Products with Stock Info
@@ -74,16 +86,22 @@ h3. Create Simple Product
 
 For all websites, omit the @--webs@ parameter:
 
-bc. ./product-add-simple.php --sku zibalabel_t6 --name 'Tas Batik TX5' --price 125400 --qty 123
+bc. ./product-add-simple.php --sku zibalabel_t6 --name 'Tas Batik TX5' --price 125400 --qty 123 --cats tas
 
 Specific website(s) only:
 
-bc. ./product-add-simple.php --sku zibalabel_t62 --name 'Tas Batik TX5' --price 125400 --qty 123 --webs tuneeca
+bc. ./product-add-simple.php --sku zibalabel_t62 --name 'Tas Batik TX5' --price 125400 --qty 123 --cats tas --webs tuneeca
 
 
 h3. Create Configurable Product with item_color and item_size configurable attributes
 
+For all websites, omit the @--webs@ parameter:
+
 bc. ./product-add-conf.php --sku zibalabel_t01 --name 'Tas Batik 01' --price 19500 --variants Merah/S:5,Merah/M:7,Merah/L:9,Hijau/S:12,Hijau/M:8,Hijau/L:2 --set 'Women Clothing' --summary 'Tas batik yang keren' --desc 'Cocok untuk dibawa ke mana saja'
+
+Specific website(s) only:
+
+bc. ./product-add-conf.php --sku zibalabel_t01 --name 'Tas Batik 01' --price 19500 --variants Merah/S:5,Merah/M:7,Merah/L:9,Hijau/S:12,Hijau/M:8,Hijau/L:2 --set 'Women Clothing' --summary 'Tas batik yang keren' --desc 'Cocok untuk dibawa ke mana saja' --webs tuneeca
 
 Stock quantity is also specified per variant.
 
