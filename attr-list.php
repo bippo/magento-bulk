@@ -24,6 +24,7 @@ foreach ($attrs_data as $attr) {
 		$attr->getIsUserDefined() ? 'U' : '-',
 		join(',', $attr->getApplyTo()));
 	//var_dump($attr);
+	var_dump($attr->getData());
 	if ($attr->usesSource()) {
 		$source = $attr->getSource();
 		$optStrArr = array();

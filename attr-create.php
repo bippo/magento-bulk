@@ -41,13 +41,15 @@ $productEntityTypeId = Mage::getModel('eav/entity')->setType('catalog_product')-
 $attr->setEntityTypeId($productEntityTypeId);
 
 // Add options
-$data['option'] = array('value' => array(), 'order' => array(), 'default' => 'option_1');
+$data['option'] = array('value' => array(), 'order' => array());
 for ($i = 0; $i < count($opts); $i++) {
 	$opt = $opts[$i];
 	$placeholder_id = "option_" . ($i+1);
 	$data['option']['value'][$placeholder_id] = array(0 => $opt);
 	$data['option']['order'][$placeholder_id] = $i + 1;
 }
+// set default value
+$data['default'] = array('option_1');
 
 $attr->addData($data);
 $attr->save();
