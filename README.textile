@@ -83,6 +83,10 @@ bc. ./cat-add.php --urlkey tas --name Tas --desc 'Tas yang trendy.'
 Note: A category depends on the available attributes for sorting. (i.e. @available_sort_by@, which
 by default contains @position,name,price@ but can add other custom attributes like @item_color@, @item_size@).
 
+h3. Delete Category (by URL Key)
+
+bc. ./cat-del.php tas
+
 h3. Delete All User Categories (WARNING! DANGEROUS)
 
 This will delete all categories with level 2 and below (i.e. user-created categories).
