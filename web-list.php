@@ -20,6 +20,8 @@ foreach ($websites as $website) {
 		foreach ($stores as $store) {
 			$storeNames[] = $store->getStoreId() .':'. $store->getCode() .':'. $store->getName();
 		}
-		printf("   %d %-20s %s\n", $group->getGroupId(), $group->getName(), join(' ', $storeNames));
+		printf("   %d %-20s %d %d %s\n", $group->getGroupId(), $group->getName(),
+			$group->getRootCategoryId(), $group->getDefaultStoreId(),
+			join(' ', $storeNames));
 	}
 }
