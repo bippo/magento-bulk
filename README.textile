@@ -55,9 +55,9 @@ h3. List All Products with Stock Info
 
 bc. php product-list.php
 
-h3. Create Product
+h3. Create Simple Product
 
-bc. php product-create-simple.php --sku zibalabel_t6 --name 'Tas Batik TX5' --price 125400 --qty 123
+bc. php product-add-simple.php --sku zibalabel_t6 --name 'Tas Batik TX5' --price 125400 --qty 123
 
 h3. Delete All Products (WARNING! DANGEROUS)
 

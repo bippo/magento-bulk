@@ -3,7 +3,7 @@ require_once 'init.php';
 
 $opts = getopt('', array('sku:', 'name:', 'price:', 'qty:', 'cat:', 'weight:', 'store:', 'set:', 'summary:', 'desc:'));
 if (empty($opts) || empty($opts['sku']) || empty($opts['name']) || empty($opts['price'])) {
-	echo "Usage: php product-create-simple.php --sku SKU --name NAME --price PRICE [--qty QTY] [--cat CATEGORY_ID] [--summary SUMMARY] [--desc  DESCRIPTION] [--weight WEIGHT] [--store STORE_ID] [--set ATTRIBUTE_SET_ID]\n";
+	echo "Usage: php product-add-simple.php --sku SKU --name NAME --price PRICE [--qty QTY] [--cat CATEGORY_ID] [--summary SUMMARY] [--desc  DESCRIPTION] [--weight WEIGHT] [--store STORE_ID] [--set ATTRIBUTE_SET_ID]\n";
 	exit(1);
 }
 
