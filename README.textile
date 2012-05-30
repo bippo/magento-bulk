@@ -75,6 +75,13 @@ List categories
  2 A-                      . Default Category
  3 AC tas                  . . Tas
 
+h3. Add Category
+
+bc. ./cat-add.php --urlkey tas --name Tas
+./cat-add.php --parent tas --urlkey handbag --name Handbag
+
+Note: A category depends on the available attributes for sorting. (i.e. @available_sort_by@, which
+by default contains @position,name,price@ but can add other custom attributes like @item_color@, @item_size@).
 
 h3. Delete All User Categories (WARNING! DANGEROUS)
 
@@ -93,22 +100,22 @@ h3. Create Simple Product
 
 For all websites, omit the @--webs@ parameter:
 
-bc. ./product-add-simple.php --sku zibalabel_t6 --name 'Tas Batik TX5' --price 125400 --qty 123 --cats tas
+bc. ./product-add-simple.php --sku zibalabel_t6 --name 'Tas Batik TX5' --price 125400 --qty 123 --cats tas,handbag
 
 Specific website(s) only:
 
-bc. ./product-add-simple.php --sku zibalabel_t62 --name 'Tas Batik TX5' --price 125400 --qty 123 --cats tas --webs tuneeca
+bc. ./product-add-simple.php --sku zibalabel_t62 --name 'Tas Batik TX5' --price 125400 --qty 123 --cats tas,handbag --webs tuneeca
 
 
 h3. Create Configurable Product with item_color and item_size configurable attributes
 
 For all websites, omit the @--webs@ parameter:
 
-bc. ./product-add-conf.php --sku zibalabel_t01 --name 'Tas Batik 01' --price 19500 --variants Merah/S:5,Merah/M:7,Merah/L:9,Hijau/S:12,Hijau/M:8,Hijau/L:2 --set 'Women Clothing' --summary 'Tas batik yang keren' --desc 'Cocok untuk dibawa ke mana saja'
+bc. ./product-add-conf.php --sku zibalabel_t01 --name 'Tas Batik 01' --price 19500 --variants Merah/S:5,Merah/M:7,Merah/L:9,Hijau/S:12,Hijau/M:8,Hijau/L:2 --set 'Women Clothing' --summary 'Tas batik yang keren' --desc 'Cocok untuk dibawa ke mana saja' --cats tas,handbag
 
 Specific website(s) only:
 
-bc. ./product-add-conf.php --sku zibalabel_t01 --name 'Tas Batik 01' --price 19500 --variants Merah/S:5,Merah/M:7,Merah/L:9,Hijau/S:12,Hijau/M:8,Hijau/L:2 --set 'Women Clothing' --summary 'Tas batik yang keren' --desc 'Cocok untuk dibawa ke mana saja' --webs tuneeca
+bc. ./product-add-conf.php --sku zibalabel_t01 --name 'Tas Batik 01' --price 19500 --variants Merah/S:5,Merah/M:7,Merah/L:9,Hijau/S:12,Hijau/M:8,Hijau/L:2 --set 'Women Clothing' --summary 'Tas batik yang keren' --desc 'Cocok untuk dibawa ke mana saja' --cats tas,handbag --webs tuneeca
 
 Stock quantity is also specified per variant.
 

@@ -34,9 +34,12 @@ $tree->addCollectionData($collection, true);
 
 // A=active. C=anchor
 function printCategory($cat, $prefix) {
-	printf("%2d %s%s %-20s %s%s\n", $cat->getId(), $cat->getIsActive() ? 'A' : '-',
+	/* @var $cat Mage_Catalog_Model_Category */
+	var_dump($cat->getAvailableSortByOptions());
+	printf("%2d %s%s %-20s %-12s %s%-30s %s\n", $cat->getId(), $cat->getIsActive() ? 'A' : '-',
 		$cat->getIsAnchor() ? 'C' : '-',
-		$cat->getUrlKey(), $prefix, $cat->getName() );
+		$cat->getUrlKey(), $cat->getDefaultSortBy(), $prefix, $cat->getName(), $cat->getAvailableSortBy() );
+	//var_dump($cat);
 	foreach ($cat->getChildren() as $child) {
 		printCategory($child, '. '. $prefix);
 	}
