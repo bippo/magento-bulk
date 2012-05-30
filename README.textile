@@ -49,6 +49,21 @@ bc. ./attrset-del.php 'Women Clothing'
 Multiple arguments are supported to delete several attribute sets at once.
 
 
+h2. Website, Store, Store View Management
+
+h3. List Websites, Stores, Store Views
+
+bc. ./web-list.php 
+Loading Magento... OK.
+List websites
+ID CODE       NAME
+ 0 admin      Admin                         
+ 1 base       Main Website                  
+   1 Main Website Store   1:default:Default Store View 3:fb:Facebook 2:m:Mobile
+ 2 tuneeca    Tuneeca                       
+   2 Tuneeca Store        4:tuneecadefault:Tuneeca Default 5:tuneecafb:Tuneeca Facebook 6:tuneecam:Tuneeca Mobile
+
+
 h2. Product Management
 
 h3. List All Products with Stock Info
@@ -57,7 +72,14 @@ bc. ./product-list.php
 
 h3. Create Simple Product
 
+For all websites, omit the @--webs@ parameter:
+
 bc. ./product-add-simple.php --sku zibalabel_t6 --name 'Tas Batik TX5' --price 125400 --qty 123
+
+Specific website(s) only:
+
+bc. ./product-add-simple.php --sku zibalabel_t62 --name 'Tas Batik TX5' --price 125400 --qty 123 --webs tuneeca
+
 
 h3. Create Configurable Product with item_color and item_size configurable attributes
 
@@ -73,4 +95,3 @@ bc. ./product-del.php zibalabel_t4
 h3. Delete All Products (WARNING! DANGEROUS)
 
 bc. ./product-clear.php
-
