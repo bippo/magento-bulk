@@ -2,6 +2,40 @@ h1. Magento Bulk
 
 Bulk operations for Magento.
 
+
 h2. Configuration
 
 Copy @config.php.sample@ to @config.php@ and edit it.
+
+
+h2. Attribute Management
+
+h3. List All Attributes
+
+bc. php attr-list.php
+
+h3. List All User-defined Attributes
+
+bc. php attr-list.php -u
+
+On a blank Magento installation this will list only 3 attributes: @color@, @cost@, and @manufacturer@.
+
+h3. Create Attribute
+
+bc. php attr-create.php --code item_color --label Warna --opts Biru,Hijau,Merah
+
+
+h2. Product Management
+
+h3. List All Products with Stock Info
+
+bc. php product-list.php
+
+h3. Create Product
+
+bc. php product-create-simple.php --sku zibalabel_t6 --name 'Tas Batik TX5' --price 125400 --qty 123
+
+h3. Delete All Products (WARNING! DANGEROUS)
+
+bc. php product-clear.php
+

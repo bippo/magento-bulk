@@ -1,42 +1,45 @@
 <?php
 require_once 'init.php';
 
-$opts = getopt('', array('sku:', 'name:', 'price:', 'qty:', 'cat:', 'weight:', 'store:', 'set:', 'summary:', 'desc:'));
-if (empty($opts) || empty($opts['sku']) || empty($opts['name']) || empty($opts['price'])) {
-	echo "Usage: php product-create-simple.php --sku SKU --name NAME --price PRICE [--qty QTY] [--cat CATEGORY_ID] [--summary SUMMARY] [--desc  DESCRIPTION] [--weight WEIGHT] [--store STORE_ID] [--set ATTRIBUTE_SET_ID]\n";
+$args = getopt('', array('code:', 'label:', 'opts:'));
+if (empty($args) || empty($args['code']) || empty($args['label']) || empty($args['opts'])) {
+	echo "Create a select/dropdown configurable attribute\n";
+	echo "Usage: php attr-create.php --code CODE --label LABEL --opts [OPT,OPT,...]\n";
 	exit(1);
 }
 
-$sku = $opts['sku'];
-$name = $opts['name'];
-$price= $opts['price'];
-$storeId = !empty($opts['store']) ? $opts['store'] : DEFAULT_STORE_ID;
-$setId = !empty($opts['set']) ? $opts['set'] : DEFAULT_ATTRIBUTE_SET_ID;
-$summary = !empty($opts['summary']) ? $opts['summary'] : $name;
-$description = !empty($opts['desc']) ? $opts['desc'] : $summary;
-$qty = !empty($opts['qty']) ? $opts['qty'] : 1.0;
-$categoryId = !empty($opts['cat']) ? $opts['cat'] : DEFAULT_CATEGORY_ID;
-$weight = !empty($opts['weight']) ? $opts['weight'] : 1.0;
-echo "Create simple product $sku name: $name price: $price qty: $qty\n";
+$code = $args['code'];
+$label = $args['label'];
+$opts = split(',', $args['opts']);
+echo "Create attribute $code label: $label opts: ". join(', ', $opts) ."\n";
 
-$product = Mage::getModel('catalog/product');
-$product->setStoreId($storeId)
-	->setAttributeSetId($setId)
-	->setTypeId('simple')
-	->setSku($opts['sku']);
-$product->setName($name);
-$product->setShortDescription($summary);
-$product->setDescription($description);
-$product->setStatus(1);
-$product->setVisibility(4);
-$product->setWeight($weight);
-$product->setPrice($price);
-$product->setCategories(array($categoryId));
+$attr = Mage::getModel('catalog/resource_eav_attribute');
+$data = array(
+	'attribute_code' => $code,
+	'backend_type' => 'int',
+	'frontend_input' => 'select',
+	'frontend_label' => array( array('store_id' => 0, 'label' => $label) ),
+	'is_required' => 0,
+	'is_user_defined' => 1,
+	'default_value' => 0,
+	'is_unique' => 0,
+	'is_global' => 1,
+	'is_visible' => 1,
+	'is_searchable' => 1,
+	'is_filterable' => 1,
+	'is_comparable' => 1,
+	'is_visible_on_front' => 1,
+	'is_html_allowed_on_front' => 1,
+	'is_used_for_price_rules' => 1,
+	'is_filterable_in_search' => 1,
+	'used_in_product_listing' => 1,
+	'used_for_sort_by' => 1,
+	'is_configurable' => 1,
+	'is_visible_in_advanced_search' => 1,
+	'is_used_for_promo_rules' => 1);
+$attr->addData($data);
+$productEntityTypeId = Mage::getModel('eav/entity')->setType('catalog_product')->getTypeId();
+$attr->setEntityTypeId($productEntityTypeId);
+$attr->save();
 
-// set stock
-$stockData = array('qty' => $qty, 'is_in_stock' => 1, 'use_config_manage_stock' => 1, 'use_backorders' => 1);
-$product->setStockData($stockData);
-
-$product->save();
-
-echo "Created product #{$product->getId()}.\n";
+echo "Created attribute #{$attr->getId()}.\n";
