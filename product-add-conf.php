@@ -8,11 +8,19 @@
 require_once 'init.php';
 
 $opts = getopt('', array('sku:', 'name:', 'price:', 'cat:', 'weight:', 'store:', 'set:', 'summary:', 'desc:',
-	'variants:'));
+	'variants:', 'webs:'));
 if (empty($opts) || empty($opts['sku']) || empty($opts['name']) || empty($opts['price']) || empty($opts['variants'])) {
-	echo "Usage: product-add-conf.php --sku SKU --name NAME --price PRICE --variants COLOR/SIZE:QTY,... [--cat CATEGORY_ID] [--summary SUMMARY] [--desc  DESCRIPTION] [--weight WEIGHT] [--store STORE_ID] [--set ATTRIBUTE_SET_ID]\n";
+	echo "Usage: product-add-conf.php --sku SKU --name NAME --price PRICE --variants COLOR/SIZE:QTY,... [--cat CATEGORY_ID] [--summary SUMMARY] [--desc  DESCRIPTION] [--weight WEIGHT] [--store STORE_ID] [--set ATTRIBUTE_SET_ID] [--webs CODE,...]\n";
 	exit(1);
 }
+
+echo 'Loading websites...';
+$websites = Mage::getModel('core/website')->getCollection()->setLoadDefault(false);
+$websiteLookup = array();
+foreach ($websites as $website) {
+	$websiteLookup[$website->getCode()] = $website->getWebsiteId();
+}
+echo ' '. join(' ', array_keys($websiteLookup)) ."\n";
 
 echo "Loading attribute sets...";
 $entityType = Mage::getModel('catalog/product')->getResource()->getEntityType();
@@ -60,7 +68,16 @@ $summary = !empty($opts['summary']) ? $opts['summary'] : $name;
 $description = !empty($opts['desc']) ? $opts['desc'] : $summary;
 $categoryId = !empty($opts['cat']) ? $opts['cat'] : DEFAULT_CATEGORY_ID;
 $weight = !empty($opts['weight']) ? $opts['weight'] : 1.0;
-echo "Create configurable product $sku name: $name set: $set price: $price variants: $variants qty: $qty\n";
+$webs = !empty($opts['webs']) ? $opts['webs'] : join(',', array_keys($websiteLookup)); // if not specified, select all websites
+echo "Create configurable product $sku name: $name set: $set price: $price variants: $variants qty: $qty webs: $webs\n";
+
+$webCodes = split(',', $webs);
+$websiteIds = array();
+foreach ($webCodes as $webCode) {
+	if (!isset($websiteLookup[$webCode]))
+		throw new Exception("Cannot find website '$webCode'");
+	$websiteIds[] = $websiteLookup[$webCode];
+}
 
 if (!isset($sets[$set]))
 	throw new Exception("Cannot find attribute set '$set'");
@@ -118,6 +135,7 @@ foreach ($variantsData as $variantData) {
 	$product->setPrice($price);
 	$product->setCategoryIds(array($categoryId));
 	$product->setTaxClassId(0); // 0=None 2=Taxable Goods 4=Shipping
+	$product->setWebsiteIds($websiteIds);
 	$product->addData(array(
 		'item_color' => $variantData['item_color'],
 		'item_size' => $variantData['item_size'] ));
@@ -154,6 +172,7 @@ $product->setWeight($weight);
 $product->setPrice($price);
 $product->setCategoryIds(array($categoryId));
 $product->setTaxClassId(0); // 0=None 2=Taxable Goods 4=Shipping
+$product->setWebsiteIds($websiteIds);
 
 // set stock
 $stockData = array('is_in_stock' => 1);
