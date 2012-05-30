@@ -12,22 +12,22 @@ h2. Product Attribute Management
 
 h3. List All Attributes
 
-bc. php attr-list.php
+bc. ./attr-list.php
 
 h3. List All User-defined Attributes
 
-bc. php attr-list.php -u
+bc. ./attr-list.php -u
 
 On a blank Magento installation this will list only 3 attributes: @color@, @cost@, and @manufacturer@.
 
 h3. Create Attribute
 
-bc. php attr-add.php --code item_color --label Warna --opts Biru,Hijau,Merah,Putih,Hitam,Kuning,Ungu,Abu-abu
+bc. ./attr-add.php --code item_color --label Warna --opts Biru,Hijau,Merah,Putih,Hitam,Kuning,Ungu,Abu-abu
 php attr-add.php --code item_size --label Ukuran --opts SS,S,M,L,XL,XXL
 
 h3. Delete Attribute
 
-bc. php attr-del.php item_color
+bc. ./attr-del.php item_color
 
 Multiple arguments are supported to delete several attributes at once.
 
@@ -36,15 +36,15 @@ h2. Product Attribute Set Management
 
 h3. List All Attribute Sets
 
-bc. php attrset-list.php
+bc. ./attrset-list.php
 
 h3. Create Attribute Set
 
-bc. php attrset-add.php --name 'Women Clothing' --attrs item_color,item_size
+bc. ./attrset-add.php --name 'Women Clothing' --attrs item_color,item_size
 
 h3. Delete Attribute Set
 
-bc. php attrset-del.php 'Women Clothing'
+bc. ./attrset-del.php 'Women Clothing'
 
 Multiple arguments are supported to delete several attribute sets at once.
 
@@ -53,18 +53,24 @@ h2. Product Management
 
 h3. List All Products with Stock Info
 
-bc. php product-list.php
+bc. ./product-list.php
 
 h3. Create Simple Product
 
-bc. php product-add-simple.php --sku zibalabel_t6 --name 'Tas Batik TX5' --price 125400 --qty 123
+bc. ./product-add-simple.php --sku zibalabel_t6 --name 'Tas Batik TX5' --price 125400 --qty 123
+
+h3. Create Configurable Product with item_color and item_size configurable attributes
+
+bc. ./product-add-conf.php --sku zibalabel_t01 --name 'Tas Batik 01' --price 19500 --variants Merah/S:5,Merah/M:7,Merah/L:9,Hijau/S:12,Hijau/M:8,Hijau/L:2 --set 'Women Clothing' --summary 'Tas batik yang keren' --desc 'Cocok untuk dibawa ke mana saja'
+
+Stock quantity is also specified per variant.
 
 h3. Delete Product
 
-bc. php product-del.php zibalabel_t4
-php product-delid.php 123
+bc. ./product-del.php zibalabel_t4
+./product-delid.php 123
 
 h3. Delete All Products (WARNING! DANGEROUS)
 
-bc. php product-clear.php
+bc. ./product-clear.php
 

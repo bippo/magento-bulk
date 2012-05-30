@@ -32,7 +32,8 @@ $product->setStatus(1);
 $product->setVisibility(4);
 $product->setWeight($weight);
 $product->setPrice($price);
-$product->setCategories(array($categoryId));
+$product->setCategoryIds(array($categoryId));
+$product->setTaxClassId(0); // 0=None 2=Taxable Goods 4=Shipping
 
 // set stock
 $stockData = array('qty' => $qty, 'is_in_stock' => 1, 'use_config_manage_stock' => 1, 'use_backorders' => 1);
