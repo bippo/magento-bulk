@@ -8,7 +8,7 @@ h2. Configuration
 Copy @config.php.sample@ to @config.php@ and edit it.
 
 
-h2. Attribute Management
+h2. Product Attribute Management
 
 h3. List All Attributes
 
@@ -30,6 +30,24 @@ h3. Delete Attribute
 bc. php attr-del.php item_color
 
 Multiple arguments are supported to delete several attributes at once.
+
+
+h2. Product Attribute Set Management
+
+h3. List All Attribute Sets
+
+bc. php attrset-list.php
+
+h3. Create Attribute Set
+
+bc. php attrset-create.php --name 'Women Clothing'
+
+
+h3. Delete Attribute Set
+
+bc. php attrset-del.php 'Women Clothing'
+
+Multiple arguments are supported to delete several attribute sets at once.
 
 
 h2. Product Management
