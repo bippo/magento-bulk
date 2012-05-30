@@ -1,9 +1,10 @@
+#!/usr/bin/php
 <?php
 require_once 'init.php';
 
 $opts = getopt('', array('name:', 'base:', 'attrs:'));
 if (empty($opts) || empty($opts['name'])) {
-	echo "Usage: php attrset-add.php --name NAME [--base BASE_NAME] [--attrs ATTRIBUTE_CODE,...]\n";
+	echo "Usage: attrset-add.php --name NAME [--base BASE_NAME] [--attrs ATTRIBUTE_CODE,...]\n";
 	exit(1);
 }
 

@@ -1,9 +1,10 @@
+#!/usr/bin/php
 <?php
 require_once 'init.php';
 
 if (count($argv) < 2) {
 	echo "Delete products\n";
-	echo "Usage: php product-del.php SKU [...]\n";
+	echo "Usage: product-del.php SKU [...]\n";
 	exit(1);
 }
 

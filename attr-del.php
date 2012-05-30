@@ -1,9 +1,10 @@
+#!/usr/bin/php
 <?php
 require_once 'init.php';
 
 if (count($argv) < 2) {
 	echo "Delete attributes\n";
-	echo "Usage: php attr-del.php CODE [...]\n";
+	echo "Usage: attr-del.php CODE [...]\n";
 	exit(1);
 }
 

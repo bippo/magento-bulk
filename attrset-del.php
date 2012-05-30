@@ -1,9 +1,10 @@
+#!/usr/bin/php
 <?php
 require_once 'init.php';
 
 if (count($argv) < 2) {
 	echo "Delete attribute set\n";
-	echo "Usage: php attrset-del.php NAME [...]\n";
+	echo "Usage: attrset-del.php NAME [...]\n";
 	exit(1);
 }
 
