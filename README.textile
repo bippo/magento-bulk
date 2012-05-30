@@ -40,8 +40,7 @@ bc. php attrset-list.php
 
 h3. Create Attribute Set
 
-bc. php attrset-create.php --name 'Women Clothing'
-
+bc. php attrset-add.php --name 'Women Clothing' --attrs item_color,item_size
 
 h3. Delete Attribute Set
 

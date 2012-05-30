@@ -25,7 +25,7 @@ foreach ($collection as $attributeSet) {
 			->checkConfigurableProducts();
 		$attrCodes = array();
 		foreach ($attrs as $attr) {
-			$attrCodes[] = $attr->getAttributeCode();
+			$attrCodes[] = $attr->getAttributeCode() .'/'. $attr->getSortOrder();
 		}
 		printf("    %-20s: %s\n", $group->getAttributeGroupName(), join(' ', $attrCodes));
 // 			if ($defaultGroupId == 0 or $group->getIsDefault()) {

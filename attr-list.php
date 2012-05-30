@@ -5,12 +5,12 @@ $args = getopt('u', array());
 
 echo "List all product attributes\n";
 $attrs = Mage::getResourceModel('catalog/product_attribute_collection');
+if (isset($args['u']))	// filter only is_user_defined attributes
+	$attrs->addFieldToFilter('main_table.is_user_defined', 1);
 Mage::log('attr-list: '. count($attrs) . ' attributes total');
 $attrs_data = $attrs->load();
 echo "G=global C=configurable V=visible U=user-defined\n";
 foreach ($attrs_data as $attr) {
-	if (isset($args['u']) && $attr->getIsUserDefined() == false)
-		continue;
 // 	$attr->load();
 // 	var_dump($attr->getData());
 	printf("%3d %-30s %-25s %-10s %-11s %1s%1s%1s%1s %-30s\n", $attr->getId(),
@@ -34,5 +34,4 @@ foreach ($attrs_data as $attr) {
 		}
 		echo "    " . join(' ', $optStrArr) ."\n";		
 	}
-	
 }
