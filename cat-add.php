@@ -2,10 +2,10 @@
 <?php
 require_once 'init.php';
 
-$args = getopt('', array('parent:', 'urlkey:', 'name:'));
+$args = getopt('', array('parent:', 'urlkey:', 'name:', 'title:', 'desc:'));
 if (empty($args) || empty($args['urlkey']) || empty($args['name'])) {
 	echo "Create sub-category\n";
-	echo "Usage: cat-add.php --parent PARENT --urlkey URL_KEY --name NAME\n";
+	echo "Usage: cat-add.php --parent PARENT --urlkey URL_KEY --name NAME [--desc DESCRIPTION] [--title TITLE]\n";
 	exit(1);
 }
 
@@ -24,6 +24,8 @@ echo join(' ', array_keys($categoryLookup)) .". default: ". $defaultParentId . "
 $parent = $args['parent'];
 $urlkey = $args['urlkey'];
 $name = $args['name'];
+$description = $args['desc'];
+$metaTitle = $args['title'];
 $store = 'default';
 $storeId = 0;
 
@@ -48,6 +50,8 @@ $category = Mage::getModel('catalog/category')
 
 $category->setName($name);
 $category->setUrlKey($urlkey);
+$category->setDescription($description);
+$category->setMetaTitle($metaTitle);
 $category->setIsActive(1);
 $category->setIsAnchor(1);
 $category->setAttributeSetId($category->getDefaultAttributeSetId());

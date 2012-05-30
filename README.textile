@@ -77,8 +77,8 @@ List categories
 
 h3. Add Category
 
-bc. ./cat-add.php --urlkey tas --name Tas
-./cat-add.php --parent tas --urlkey handbag --name Handbag
+bc. ./cat-add.php --urlkey tas --name Tas --desc 'Tas yang trendy.'
+./cat-add.php --parent tas --urlkey handbag --name Handbag --desc 'Mudah dijinjing dan praktis.'
 
 Note: A category depends on the available attributes for sorting. (i.e. @available_sort_by@, which
 by default contains @position,name,price@ but can add other custom attributes like @item_color@, @item_size@).
