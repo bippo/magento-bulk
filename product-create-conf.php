@@ -1,7 +1,4 @@
 <?php
-require_once 'config.php';
-require_once MAGENTO_HOME . '/app/Mage.php';
+require_once 'init.php';
 
-Mage::app();
-
-echo "Delete all products\n";
+echo "Create configurable product\n";

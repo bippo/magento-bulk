@@ -1,8 +1,5 @@
 <?php
-require_once 'config.php';
-require_once MAGENTO_HOME . '/app/Mage.php';
-
-Mage::app();
+require_once 'init.php';
 
 $opts = getopt('', array('sku:', 'name:', 'price:', 'qty:', 'cat:', 'weight:', 'store:', 'set:', 'summary:', 'desc:'));
 if (empty($opts) || empty($opts['sku']) || empty($opts['name']) || empty($opts['price'])) {
