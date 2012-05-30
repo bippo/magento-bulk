@@ -1,0 +1,4 @@
+<?php
+define('MAGENTO_HOME', '/home/ceefour/public_html/berbatik');
+define('DEFAULT_STORE_ID', 1);
+define('DEFAULT_ATTRIBUTE_SET_ID', 4);

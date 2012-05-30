@@ -1,0 +1,7 @@
+h1. Magento Bulk
+
+Bulk operations for Magento.
+
+h2. Configuration
+
+Copy @config.php.sample@ to @config.php@ and edit it.
