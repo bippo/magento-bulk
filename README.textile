@@ -22,7 +22,14 @@ On a blank Magento installation this will list only 3 attributes: @color@, @cost
 
 h3. Create Attribute
 
-bc. php attr-create.php --code item_color --label Warna --opts Biru,Hijau,Merah
+bc. php attr-create.php --code item_color --label Warna --opts Biru,Hijau,Merah,Putih,Hitam,Kuning,Ungu,Abu-abu
+php attr-create.php --code item_size --label Ukuran --opts SS,S,M,L,XL,XXL
+
+h3. Delete Attribute
+
+bc. php attr-del.php item_color
+
+Multiple arguments are supported to delete several attributes at once.
 
 
 h2. Product Management

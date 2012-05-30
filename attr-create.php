@@ -18,7 +18,7 @@ $data = array(
 	'attribute_code' => $code,
 	'backend_type' => 'int',
 	'frontend_input' => 'select',
-	'frontend_label' => array( array('store_id' => 0, 'label' => $label) ),
+	'frontend_label' => $label,
 	'is_required' => 0,
 	'is_user_defined' => 1,
 	'default_value' => 0,
@@ -37,9 +37,19 @@ $data = array(
 	'is_configurable' => 1,
 	'is_visible_in_advanced_search' => 1,
 	'is_used_for_promo_rules' => 1);
-$attr->addData($data);
 $productEntityTypeId = Mage::getModel('eav/entity')->setType('catalog_product')->getTypeId();
 $attr->setEntityTypeId($productEntityTypeId);
+
+// Add options
+$data['option'] = array('value' => array(), 'order' => array(), 'default' => 'option_1');
+for ($i = 0; $i < count($opts); $i++) {
+	$opt = $opts[$i];
+	$placeholder_id = "option_" . ($i+1);
+	$data['option']['value'][$placeholder_id] = array(0 => $opt);
+	$data['option']['order'][$placeholder_id] = $i + 1;
+}
+
+$attr->addData($data);
 $attr->save();
 
 echo "Created attribute #{$attr->getId()}.\n";

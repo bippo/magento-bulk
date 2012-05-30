@@ -13,8 +13,9 @@ foreach ($attrs_data as $attr) {
 		continue;
 // 	$attr->load();
 // 	var_dump($attr->getData());
-	printf("%3d %-30s %-10s %-11s %1s%1s%1s%1s %-30s\n", $attr->getId(),
+	printf("%3d %-30s %-25s %-10s %-11s %1s%1s%1s%1s %-30s\n", $attr->getId(),
 		$attr->getAttributeCode(),
+		$attr->getFrontendLabel(),
 		$attr->getBackendType(),
 		$attr->getFrontendInput(),
 		$attr->getIsGlobal() ? 'G' : '-',
