@@ -54,8 +54,9 @@ $attributeSet->save();
 $attributeSet->initFromSkeleton($skeletonSetId)->save();
 echo "Created attribute set #{$attributeSet->getId()}.\n";
 
+$sortOrder = 30;
 foreach ($attrCodes as $attrCode) {
-	echo "Adding $attrCode...";
+	echo "Adding $attrCode order $sortOrder...";
 	if (!isset($udAttrLookup[$attrCode])) {
 		echo "Attribute $attrCode not found, skipping!\n";
 		continue;
@@ -66,11 +67,11 @@ foreach ($attrCodes as $attrCode) {
 	
 	$attributeGroupId = $attributeSet->getDefaultGroupId();
 	$attribute->setAttributeSetId($attributeSet->getId())->loadEntityAttributeIdBySet();
-	$sortOrder = 5;
 	$attribute->setEntityTypeId($attributeSet->getEntityTypeId())
 		->setAttributeSetId($attributeSet->getId())
 		->setAttributeGroupId($attributeGroupId)
 		->setSortOrder($sortOrder)
 		->save();
 	echo " Added.\n";
+	$sortOrder++;
 }

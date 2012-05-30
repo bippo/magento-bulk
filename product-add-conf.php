@@ -7,10 +7,10 @@
  */
 require_once 'init.php';
 
-$opts = getopt('', array('sku:', 'name:', 'price:', 'cat:', 'weight:', 'store:', 'set:', 'summary:', 'desc:',
+$opts = getopt('', array('sku:', 'name:', 'price:', 'cats:', 'weight:', 'store:', 'set:', 'summary:', 'desc:',
 	'variants:', 'webs:'));
 if (empty($opts) || empty($opts['sku']) || empty($opts['name']) || empty($opts['price']) || empty($opts['variants'])) {
-	echo "Usage: product-add-conf.php --sku SKU --name NAME --price PRICE --variants COLOR/SIZE:QTY,... [--cat CATEGORY_ID] [--summary SUMMARY] [--desc  DESCRIPTION] [--weight WEIGHT] [--store STORE_ID] [--set ATTRIBUTE_SET_ID] [--webs CODE,...]\n";
+	echo "Usage: product-add-conf.php --sku SKU --name NAME --price PRICE --variants COLOR/SIZE:QTY,... [--cats URL_KEY,...] [--summary SUMMARY] [--desc  DESCRIPTION] [--weight WEIGHT] [--store STORE_ID] [--set ATTRIBUTE_SET_ID] [--webs CODE,...]\n";
 	exit(1);
 }
 
@@ -21,6 +21,19 @@ foreach ($websites as $website) {
 	$websiteLookup[$website->getCode()] = $website->getWebsiteId();
 }
 echo ' '. join(' ', array_keys($websiteLookup)) ."\n";
+
+echo 'Loading categories...';
+$categories = Mage::getModel('catalog/category')->getCollection()
+	->addAttributeToSelect('*');
+$categoryLookup = array();
+$defaultCategoryIds = array();
+foreach ($categories as $cat) {
+	if ($cat->getUrlKey() !== '')
+		$categoryLookup[$cat->getUrlKey()] = $cat->getId();
+	if ($cat->getLevel() <= 1 && $cat->getIsActive())
+		$defaultCategoryIds[] = $cat->getId();
+}
+echo join(' ', array_keys($categoryLookup)) .". defaults: ". join(' ', $defaultCategoryIds) . "\n";
 
 echo "Loading attribute sets...";
 $entityType = Mage::getModel('catalog/product')->getResource()->getEntityType();
@@ -66,10 +79,10 @@ $storeId = !empty($opts['store']) ? $opts['store'] : DEFAULT_STORE_ID;
 $set = !empty($opts['set']) ? $opts['set'] : 'Default';
 $summary = !empty($opts['summary']) ? $opts['summary'] : $name;
 $description = !empty($opts['desc']) ? $opts['desc'] : $summary;
-$categoryId = !empty($opts['cat']) ? $opts['cat'] : DEFAULT_CATEGORY_ID;
+$cats = !empty($opts['cats']) ? $opts['cats'] : '';
 $weight = !empty($opts['weight']) ? $opts['weight'] : 1.0;
 $webs = !empty($opts['webs']) ? $opts['webs'] : join(',', array_keys($websiteLookup)); // if not specified, select all websites
-echo "Create configurable product $sku name: $name set: $set price: $price variants: $variants qty: $qty webs: $webs\n";
+echo "Create configurable product $sku name: $name set: $set price: $price variants: $variants cats: $cats webs: $webs\n";
 
 $webCodes = split(',', $webs);
 $websiteIds = array();
@@ -78,6 +91,18 @@ foreach ($webCodes as $webCode) {
 		throw new Exception("Cannot find website '$webCode'");
 	$websiteIds[] = $websiteLookup[$webCode];
 }
+echo 'Website IDs: '. join(' ', $websiteIds) ."\n";
+
+$catKeys = split(',', $cats);
+$categoryIds = $defaultCategoryIds;
+foreach ($catKeys as $catKey) {
+	if (!isset($categoryLookup[$catKey]))
+		throw new Exception("Cannot find category '$catKey'");
+	$categoryId = $categoryLookup[$catKey];
+	if (!in_array($categoryId, $categoryIds))
+		$categoryIds[] = $categoryId;
+}
+echo 'Category IDs: '. join(' ', $categoryIds) ."\n";
 
 if (!isset($sets[$set]))
 	throw new Exception("Cannot find attribute set '$set'");
@@ -101,7 +126,7 @@ foreach ($variantCodes as $variantCode) {
 	}
 	$sizeId = $optionLookup['item_size'][$size];
 	$variantSku = $sku .'-'. $color .'-'. $size;
-	$variantName = $name .' '. $color .' '. $size;
+	$variantName = $name .'-'. $color .'-'. $size;
 	echo "Variant $variantSku $variantName: qty=$qty item_color=$colorId:$color item_size=$sizeId:$size\n";
 	$variantsData[] = array(
 		'sku' => $variantSku,
@@ -116,8 +141,8 @@ foreach ($variantCodes as $variantCode) {
 $variantIds = array(); // sku => magentoProductId
 $configurableProductsData = array();
 $configurableAttributesData = array(
-	array('values' => array(), 'attribute_id' => $item_color_attrId, 'attribute_code' => 'item_color'),
-	array('values' => array(), 'attribute_id' => $item_size_attrId, 'attribute_code' => 'item_size')
+	array('attribute_id' => $item_color_attrId, 'attribute_code' => 'item_color', 'position' => 0, 'values' => array() ),
+	array('attribute_id' => $item_size_attrId, 'attribute_code' => 'item_size', 'position' => 1, 'values' => array() )
 );
 foreach ($variantsData as $variantData) {
 	echo "Creating child product {$variantData['sku']}...";
@@ -133,7 +158,7 @@ foreach ($variantsData as $variantData) {
 	$product->setVisibility(1); // Not Visible Individually
 	$product->setWeight($weight);
 	$product->setPrice($price);
-	$product->setCategoryIds(array($categoryId));
+	$product->setCategoryIds($categoryIds);
 	$product->setTaxClassId(0); // 0=None 2=Taxable Goods 4=Shipping
 	$product->setWebsiteIds($websiteIds);
 	$product->addData(array(
@@ -148,11 +173,14 @@ foreach ($variantsData as $variantData) {
 	$product->save();
 	echo " #{$product->getId()}.\n";
 	
-	$configurableProductsData[ $product->getId() ] = array();
+	$configurableProductsData[ $product->getId() ] = array(
+		array('attribute_id' => $item_color_attrId, 'value_index' => $variantData['item_color'] ),
+		array('attribute_id' => $item_size_attrId, 'value_index' => $variantData['item_size'] )
+	);
 	$configurableAttributesData[0]['values'][ $product->getId() ] = array(
-		'attribute_id' => $item_color_attrId, 'value_index' => $variantData['item_color'] ); 
+		'value_index' => $variantData['item_color'] ); 
 	$configurableAttributesData[1]['values'][ $product->getId() ] = array(
-		'attribute_id' => $item_size_attrId, 'value_index' => $variantData['item_size'] ); 
+		'value_index' => $variantData['item_size'] ); 
 }
 
 // Create the parent configurable product
@@ -170,7 +198,7 @@ $product->setStatus(1);
 $product->setVisibility(4);
 $product->setWeight($weight);
 $product->setPrice($price);
-$product->setCategoryIds(array($categoryId));
+$product->setCategoryIds($categoryIds);
 $product->setTaxClassId(0); // 0=None 2=Taxable Goods 4=Shipping
 $product->setWebsiteIds($websiteIds);
 

@@ -40,7 +40,7 @@ $qty = !empty($opts['qty']) ? $opts['qty'] : 1.0;
 $cats = !empty($opts['cats']) ? $opts['cats'] : '';
 $weight = !empty($opts['weight']) ? $opts['weight'] : 1.0;
 $webs = !empty($opts['webs']) ? $opts['webs'] : join(',', array_keys($websiteLookup)); // if not specified, select all websites
-echo "Create simple product $sku name: $name price: $price qty: $qty webs: $webs\n";
+echo "Create simple product $sku name: $name price: $price qty: $qty cats: $cats webs: $webs\n";
 
 $webCodes = split(',', $webs);
 $websiteIds = array();
