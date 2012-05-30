@@ -59,6 +59,11 @@ h3. Create Simple Product
 
 bc. php product-add-simple.php --sku zibalabel_t6 --name 'Tas Batik TX5' --price 125400 --qty 123
 
+h3. Delete Product
+
+bc. php product-del.php zibalabel_t4
+php product-delid.php 123
+
 h3. Delete All Products (WARNING! DANGEROUS)
 
 bc. php product-clear.php
