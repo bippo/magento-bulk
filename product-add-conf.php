@@ -125,8 +125,8 @@ foreach ($variantCodes as $variantCode) {
 		throw new Exception("Cannot find option value for item_size '$size'");
 	}
 	$sizeId = $optionLookup['item_size'][$size];
-	$variantSku = $sku .'-'. $color .'-'. $size;
-	$variantName = $name .'-'. $color .'-'. $size;
+	$variantSku = $sku .' - '. $color .'_'. $size;
+	$variantName = $name .' - '. $color .'_'. $size;
 	echo "Variant $variantSku $variantName: qty=$qty item_color=$colorId:$color item_size=$sizeId:$size\n";
 	$variantsData[] = array(
 		'sku' => $variantSku,
