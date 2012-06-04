@@ -8,7 +8,7 @@
 require_once 'init.php';
 
 $opts = getopt('', array('sku:', 'name:', 'price:', 'cats:', 'weight:', 'store:', 'set:', 'summary:', 'desc:',
-	'variants:', 'webs:'));
+		'variants:', 'webs:'));
 if (empty($opts) || empty($opts['sku']) || empty($opts['name']) || empty($opts['price']) || empty($opts['variants'])) {
 	echo "Usage: product-add-conf.php --sku SKU --name NAME --price PRICE --variants COLOR/SIZE:QTY,... [--cats URL_KEY,...] [--summary SUMMARY] [--desc  DESCRIPTION] [--weight WEIGHT] [--store STORE_ID] [--set ATTRIBUTE_SET_ID] [--webs CODE,...]\n";
 	exit(1);
@@ -20,11 +20,11 @@ $websiteLookup = array();
 foreach ($websites as $website) {
 	$websiteLookup[$website->getCode()] = $website->getWebsiteId();
 }
-echo ' '. join(' ', array_keys($websiteLookup)) ."\n";
+echo 'x '. join(' ', array_keys($websiteLookup)) ."\n";
 
 echo 'Loading categories...';
 $categories = Mage::getModel('catalog/category')->getCollection()
-	->addAttributeToSelect('*');
+->addAttributeToSelect('*');
 $categoryLookup = array();
 $defaultCategoryIds = array();
 foreach ($categories as $cat) {
@@ -38,7 +38,7 @@ echo join(' ', array_keys($categoryLookup)) .". defaults: ". join(' ', $defaultC
 echo "Loading attribute sets...";
 $entityType = Mage::getModel('catalog/product')->getResource()->getEntityType();
 $collection = Mage::getResourceModel('eav/entity_attribute_set_collection')
-	->setEntityTypeFilter($entityType->getId());
+->setEntityTypeFilter($entityType->getId());
 $sets = array();
 foreach ($collection as $attributeSet) {
 	$sets[$attributeSet->getAttributeSetName()] = $attributeSet;
@@ -60,7 +60,8 @@ foreach ($udAttrs as $attr) {
 		foreach ($source->getAllOptions() as $optionOrder => $optionValue) {
 			if (empty($optionOrder) || empty($optionValue))
 				continue;
-			$valueLookup[$optionValue['label']] = $optionValue['value'];
+			$valueLookup[trim($optionValue['label'])] = $optionValue['value'];
+			//echo "value-label : ".trim($optionValue['label'])." - ";
 		}
 		$optionLookup[$attr->getAttributeCode()] = $valueLookup;
 		echo $attr->getAttributeCode() .': '. join(' ', array_keys($valueLookup)) ."\n";
@@ -117,10 +118,13 @@ foreach ($variantCodes as $variantCode) {
 	if (!preg_match('/^(.+)\\/(.+):(.+)$/', $variantCode, $matches))
 		throw new Exception("Invalid variant code: $variantCode");
 	list($dummy, $color, $size, $qty) = $matches;
+	//var_dump($optionLookup['item_color']);
+	echo "Varian Code Test => ". $variantCode."\n";
+	$color = str_replace("_", " ", $color);
+	echo "Test Color --> " . $optionLookup['item_color'][$color]."\n";
 	if (!isset($optionLookup['item_color'][$color])) {
 		throw new Exception("Cannot find option value for item_color '$color'");
 	}
-	$colorId = $optionLookup['item_color'][$color];
 	if (!isset($optionLookup['item_size'][$size])) {
 		throw new Exception("Cannot find option value for item_size '$size'");
 	}
@@ -129,11 +133,11 @@ foreach ($variantCodes as $variantCode) {
 	$variantName = $name .' - '. $color .'_'. $size;
 	echo "Variant $variantSku $variantName: qty=$qty item_color=$colorId:$color item_size=$sizeId:$size\n";
 	$variantsData[] = array(
-		'sku' => $variantSku,
-		'name' => $variantName,
-		'qty' => $qty,
-		'item_color' => $colorId,
-		'item_size' => $sizeId
+			'sku' => $variantSku,
+			'name' => $variantName,
+			'qty' => $qty,
+			'item_color' => $colorId,
+			'item_size' => $sizeId
 	);
 }
 
@@ -141,16 +145,16 @@ foreach ($variantCodes as $variantCode) {
 $variantIds = array(); // sku => magentoProductId
 $configurableProductsData = array();
 $configurableAttributesData = array(
-	array('attribute_id' => $item_color_attrId, 'attribute_code' => 'item_color', 'position' => 0, 'values' => array() ),
-	array('attribute_id' => $item_size_attrId, 'attribute_code' => 'item_size', 'position' => 1, 'values' => array() )
+		array('attribute_id' => $item_color_attrId, 'attribute_code' => 'item_color', 'position' => 0, 'values' => array() ),
+		array('attribute_id' => $item_size_attrId, 'attribute_code' => 'item_size', 'position' => 1, 'values' => array() )
 );
 foreach ($variantsData as $variantData) {
 	echo "Creating child product {$variantData['sku']}...";
 	$product = Mage::getModel('catalog/product');
 	$product->setStoreId($storeId)
-		->setAttributeSetId($setId)
-		->setTypeId('simple')
-		->setSku($variantData['sku']);
+	->setAttributeSetId($setId)
+	->setTypeId('simple')
+	->setSku($variantData['sku']);
 	$product->setName($variantData['name']);
 	$product->setShortDescription($summary);
 	$product->setDescription($description);
@@ -162,25 +166,25 @@ foreach ($variantsData as $variantData) {
 	$product->setTaxClassId(0); // 0=None 2=Taxable Goods 4=Shipping
 	$product->setWebsiteIds($websiteIds);
 	$product->addData(array(
-		'item_color' => $variantData['item_color'],
-		'item_size' => $variantData['item_size'] ));
-	
+			'item_color' => $variantData['item_color'],
+			'item_size' => $variantData['item_size'] ));
+
 	// set stock
 	$stockData = array('qty' => $variantData['qty'], 'is_in_stock' => 1,
-		'use_config_manage_stock' => 1, 'use_backorders' => 1);
+			'use_config_manage_stock' => 1, 'use_backorders' => 1);
 	$product->setStockData($stockData);
 
 	$product->save();
 	echo " #{$product->getId()}.\n";
-	
+
 	$configurableProductsData[ $product->getId() ] = array(
-		array('attribute_id' => $item_color_attrId, 'value_index' => $variantData['item_color'] ),
-		array('attribute_id' => $item_size_attrId, 'value_index' => $variantData['item_size'] )
+			array('attribute_id' => $item_color_attrId, 'value_index' => $variantData['item_color'] ),
+			array('attribute_id' => $item_size_attrId, 'value_index' => $variantData['item_size'] )
 	);
 	$configurableAttributesData[0]['values'][ $product->getId() ] = array(
-		'value_index' => $variantData['item_color'] ); 
+			'value_index' => $variantData['item_color'] );
 	$configurableAttributesData[1]['values'][ $product->getId() ] = array(
-		'value_index' => $variantData['item_size'] ); 
+			'value_index' => $variantData['item_size'] );
 }
 
 // Create the parent configurable product
@@ -188,9 +192,9 @@ echo "Creating parent configurable product {$opts['sku']}...";
 
 $product = Mage::getModel('catalog/product');
 $product->setStoreId($storeId)
-	->setAttributeSetId($setId)
-	->setTypeId('configurable')
-	->setSku($opts['sku']);
+->setAttributeSetId($setId)
+->setTypeId('configurable')
+->setSku($opts['sku']);
 $product->setName($name);
 $product->setShortDescription($summary);
 $product->setDescription($description);

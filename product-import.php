@@ -1,2 +1,30 @@
 #!/usr/bin/php
 <?php
+// Load File XML
+$product_xml = simplexml_load_file("/home/agus/git/tuneeca-migration/product-migration-conf-all-v2/data/product-xml.xml");
+foreach ($product_xml as $product ) {
+	$sku = $product->sku;
+	$name = $product->name;
+	$price = trim($product->price);
+	$varian = $product->varian;
+	$set = $product->set;
+	$desc = $product->desciption;
+	$summary = $product->summary;
+	$cats = $product->categories;
+	$website = $product->website;
+		
+	if ($cats == '' || $cats == null) {
+		//echo $sku.'-'.$name.'-'.$price.'-'.$varian.'-'.$set.'-'.$new_desc.'-'.$summary.'-'.$website;
+		$cmd = "./product-add-conf.php --sku '".$sku."' --name '".$name."' --price '".$price."' --variants '".$varian."' --set '".$set."' --summary '".$summary."' --desc '".$desc."' --webs '".$website."'";
+		echo shell_exec($cmd . '>> product-import-log.log');
+
+	}  else if ($website == '' || $website = null) {
+		echo $sku.'-'.$name.'-'.$price.'-'.$varian.'-'.$set.'-'.$desc.'-'.$summary.'-'.$website;
+		$cmd = "./product-add-conf.php --sku '".$sku."' --name '".$name."' --price '".$price."' --variants '".$varian."' --set '".$set."' --cats '".$cats."' --summary '".$summary."' --desc '".$desc."' --cats '".$cats."'";
+		echo shell_exec($cmd . '>> product-import-log.log');
+	}  else {
+		echo $sku.'-'.$name.'-'.$price.'-'.$varian.'-'.$set.'-'.$desc.'-'.$summary.'-'.$website;
+		$cmd = "./product-add-conf.php --sku '".$sku."' --name '".$name."' --price '".$price."' --variants '".$varian."' --set '".$set."' --cats '".$cats."' --summary '".$summary."' --desc '".$desc."' --cats '".$cats."' --webs '".$website."'";
+		echo shell_exec($cmd . '>> product-import-log.log');
+	}
+}?>
