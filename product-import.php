@@ -13,18 +13,19 @@ foreach ($product_xml as $product ) {
 	$cats = $product->categories;
 	$website = $product->website;
 		
-	if ($cats == '' || $cats == null) {
-		//echo $sku.'-'.$name.'-'.$price.'-'.$varian.'-'.$set.'-'.$new_desc.'-'.$summary.'-'.$website;
-		$cmd = "./product-add-conf.php --sku '".$sku."' --name '".$name."' --price '".$price."' --variants '".$varian."' --set '".$set."' --summary '".$summary."' --desc '".$desc."' --webs '".$website."'";
-		echo shell_exec($cmd . '>> product-import-log.log');
-
-	}  else if ($website == '' || $website = null) {
-		echo $sku.'-'.$name.'-'.$price.'-'.$varian.'-'.$set.'-'.$desc.'-'.$summary.'-'.$website;
-		$cmd = "./product-add-conf.php --sku '".$sku."' --name '".$name."' --price '".$price."' --variants '".$varian."' --set '".$set."' --cats '".$cats."' --summary '".$summary."' --desc '".$desc."' --cats '".$cats."'";
-		echo shell_exec($cmd . '>> product-import-log.log');
+	
+	if ($cats == "-") {
+		$setCategories = "";
 	}  else {
-		echo $sku.'-'.$name.'-'.$price.'-'.$varian.'-'.$set.'-'.$desc.'-'.$summary.'-'.$website;
-		$cmd = "./product-add-conf.php --sku '".$sku."' --name '".$name."' --price '".$price."' --variants '".$varian."' --set '".$set."' --cats '".$cats."' --summary '".$summary."' --desc '".$desc."' --cats '".$cats."' --webs '".$website."'";
-		echo shell_exec($cmd . '>> product-import-log.log');
+		$setCategories = "--cats '".$cats."'";
 	}
+	
+	if ($website == "-") {
+		$setWebsite = "";
+	}  else {
+		$setWebsite = "--webs '".$website."'";
+	}
+		
+	$cmd = "./product-add-conf.php --sku '".$sku."' --name '".$name."' --price '".$price."' --variants '".$varian."' --set '".$set."' ".$setCategories." --summary '".$summary."' --desc '".$desc."'".$setWebsite;
+	echo shell_exec($cmd . '>> product-import-log.log');
 }?>
