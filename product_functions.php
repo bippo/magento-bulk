@@ -110,6 +110,7 @@ function createSimpleProduct($productData) {
  *  @return array Product ID map with the form sku => ID.
  */
 function createConfigurableProduct($modelData, $productData, $variantsData) {
+	var_dump($modelData, $productData, $variantsData);
 	// Read parameters
 	$item_color_attrId = $modelData['item_color_attrId'];
 	$item_size_attrId = $modelData['item_size_attrId'];

@@ -155,14 +155,15 @@ echo "Loading $xmlFilename...";
 $product_xml = simplexml_load_file($xmlFilename);
 echo " Loaded.\n";
 foreach ($product_xml as $product) {
-	$storeId = !empty($product->store) ? $product->store : DEFAULT_STORE_ID;
+	$storeId = !empty($product->store) ? (int)$product->store : DEFAULT_STORE_ID;
 	$sku = (string)$product->sku;
 	$name = (string)$product->name;
-	$price = trim((string)$product->price);
+	$price = (double)$product->price;
 	$variants = (string)$product->variants;
 	$set = (string)$product->set;
-	$description = (string)$product->description;
+	$weight = (double)$product->weight;
 	$summary = (string)$product->summary;
+	$description = (string)$product->description;
 	$cats = (string)$product->categories;
 	$webs = (string)$product->webs;
 	
