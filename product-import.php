@@ -11,13 +11,13 @@ Sample input format:
         <type>configurable</type>
         <sku>zibalabel_t03</sku>
         <set>Women Clothing</set>
-        <!-- store is optional -->
+        <!-- store is optional. default is 1 (usually the base website, default store view) -->
         <store>1</store> 
         <name>Tas Batik T-03</name>
         <price>38200.00</price>
         <categories>tas,handbag</categories>
         <!-- webs is optional -->
-        <webs>tas,handbag</webs>
+        <webs>base</webs>
         <weight>1.0</weight>
         <summary>Tas Trendy Banyak Gaya</summary>
         <description>Tas yang sangat praktis dipakai ke mana-mana.</description>
