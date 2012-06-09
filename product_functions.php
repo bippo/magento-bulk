@@ -1,6 +1,80 @@
 <?php
 
 /**
+* Create simple product
+*
+* @param array $modelData Model data as map: item_color_attrId, item_size_attrId.
+*   Example: <code>array('item_color_attrId' => 123, 'item_size_attrId' => 145)</code>
+* @param array $productData Product data as map: storeId, setId, sku, name, summary, description, weight, price, categoryIds, websiteIds,
+*   Example: <pre>
+*   array(
+*     'storeId' => 1,
+*     'setId' => 9,
+*     'sku' => 'zibalabel_t01',
+*     'name' => 'Ziba Label T01',
+*     'summary' => 'Tas yang sangat bagus dan lucu',
+*     'description' => 'Cocok untuk dipakai belanja',
+*     'weight' => 5,
+*     'price' => 98000,
+*     'categoryIds' => array(4, 5),
+*     'websiteIds' => array(1, 2)
+*   )</pre>
+* @param array $variantsData Variant data as array. Each element is a map with sku, name, item_qty, item_size, and qty.
+*   Example: <pre>
+*   array(
+*     array('sku' => 'zibalabel_t01-Hitam-XL',
+*           'name' => 'Ziba Label T01-Hitam-XL',
+*           'item_color' => 'Hitam',
+*           'item_size' => 'XL',
+*           'qty' => 5),
+*     array('sku' => 'zibalabel_t01-Merah-L',
+*           'name' => 'Ziba Label T01-Merah-L',
+*           'item_color' => 'Merah',
+*           'item_size' => 'L',
+*           'qty' => 5)
+*  )</pre>
+*  @return int Product ID.
+*/
+function createSimpleProduct($productData) {
+	// Read parameters
+	$storeId = $productData['storeId'];
+	$setId = $productData['setId'];
+	$sku = $productData['sku'];
+	$name = $productData['name'];
+	$summary = $productData['summary'];
+	$description = $productData['description'];
+	$weight = $productData['weight'];
+	$price = $productData['price'];
+	$categoryIds = $productData['categoryIds'];
+	$websiteIds = $productData['websiteIds'];
+
+	$product = Mage::getModel('catalog/product');
+	$product->setStoreId($storeId)		// is Product.storeId deprecated? seems weird, bcuz Product can be assigned to multiple Websites now 
+		->setAttributeSetId($setId)
+		->setTypeId('simple')
+		->setSku($sku);
+	$product->setName($name);
+	$product->setShortDescription($summary);
+	$product->setDescription($description);
+	$product->setStatus(1);
+	$product->setVisibility(4);
+	$product->setWeight($weight);
+	$product->setPrice($price);
+	$product->setCategoryIds($categoryIds);
+	$product->setTaxClassId(0); // 0=None 2=Taxable Goods 4=Shipping
+	$product->setWebsiteIds($websiteIds);
+	
+	// set stock
+	$stockData = array('qty' => $qty, 'is_in_stock' => 1, 'use_config_manage_stock' => 1, 'use_backorders' => 1);
+	$product->setStockData($stockData);
+	
+	$product->save();
+	
+	echo "Created product #{$product->getId()}.\n";
+	return $product->getId();
+}
+
+/**
  * Create configurable product with variants in item_color and item_size attributes.
  * 
  * @param array $modelData Model data as map: item_color_attrId, item_size_attrId.
@@ -33,6 +107,7 @@
  *           'item_size' => 'L',
  *           'qty' => 5)
  *  )</pre> 
+ *  @return array Product ID map with the form sku => ID.
  */
 function createConfigurableProduct($modelData, $productData, $variantsData) {
 	// Read parameters
@@ -48,6 +123,9 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	$price = $productData['price'];
 	$categoryIds = $productData['categoryIds'];
 	$websiteIds = $productData['websiteIds'];
+	
+	// To hold results
+	$result = array();
 	
 	// Create the child products
 	$variantIds = array(); // sku => magentoProductId
@@ -86,13 +164,15 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 		echo " #{$product->getId()}.\n";
 
 		$configurableProductsData[ $product->getId() ] = array(
-		array('attribute_id' => $item_color_attrId, 'value_index' => $variantData['item_color'] ),
-		array('attribute_id' => $item_size_attrId, 'value_index' => $variantData['item_size'] )
+			array('attribute_id' => $item_color_attrId, 'value_index' => $variantData['item_color'] ),
+			array('attribute_id' => $item_size_attrId, 'value_index' => $variantData['item_size'] )
 		);
 		$configurableAttributesData[0]['values'][ $product->getId() ] = array(
 				'value_index' => $variantData['item_color'] );
 		$configurableAttributesData[1]['values'][ $product->getId() ] = array(
 				'value_index' => $variantData['item_size'] );
+		
+		$result[ $variantData['sku'] ] = $product->getId();
 	}
 
 	// Create the parent configurable product
@@ -125,4 +205,7 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	$product->save();
 
 	echo " #{$product->getId()}.\n";
+	$result[ $parentSku ] = $product->getId();
+	
+	return $result;
 }

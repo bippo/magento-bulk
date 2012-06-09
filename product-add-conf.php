@@ -150,8 +150,8 @@ createConfigurableProduct(
 	array(
 		'storeId'		=> $storeId,
 		'setId'			=> $setId,
-		'sku'			=> $opts['sku'],
-		'name'			=> $opts['name'],
+		'sku'			=> $sku,
+		'name'			=> $name,
 		'summary'		=> $summary,
 		'description'	=> $description,
 		'weight'		=> $weight,

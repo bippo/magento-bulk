@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?php
 require_once 'init.php';
+require_once 'product_functions.php';
 
 $opts = getopt('', array('sku:', 'name:', 'price:', 'qty:', 'cats:', 'weight:', 'store:', 'set:', 'summary:', 'desc:', 'webs:'));
 if (empty($opts) || empty($opts['sku']) || empty($opts['name']) || empty($opts['price'])) {
@@ -62,26 +63,14 @@ foreach ($catKeys as $catKey) {
 }
 echo 'Category IDs: '. join(' ', $categoryIds) ."\n";
 
-$product = Mage::getModel('catalog/product');
-$product->setStoreId($storeId)		// is Product.storeId deprecated? seems weird, bcuz Product can be assigned to multiple Websites now 
-	->setAttributeSetId($setId)
-	->setTypeId('simple')
-	->setSku($opts['sku']);
-$product->setName($name);
-$product->setShortDescription($summary);
-$product->setDescription($description);
-$product->setStatus(1);
-$product->setVisibility(4);
-$product->setWeight($weight);
-$product->setPrice($price);
-$product->setCategoryIds($categoryIds);
-$product->setTaxClassId(0); // 0=None 2=Taxable Goods 4=Shipping
-$product->setWebsiteIds($websiteIds);
-
-// set stock
-$stockData = array('qty' => $qty, 'is_in_stock' => 1, 'use_config_manage_stock' => 1, 'use_backorders' => 1);
-$product->setStockData($stockData);
-
-$product->save();
-
-echo "Created product #{$product->getId()}.\n";
+createSimpleProduct(array(
+	'storeId'		=> $storeId,
+	'setId'			=> $setId,
+	'sku'			=> $sku,
+	'name'			=> $name,
+	'summary'		=> $summary,
+	'description'	=> $description,
+	'weight'		=> $weight,
+	'price'			=> $price,
+	'categoryIds'	=> $categoryIds,
+	'websiteIds'	=> $websiteIds));
