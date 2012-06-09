@@ -1,7 +1,18 @@
 #!/usr/bin/php
 <?php
+require_once 'init.php';
+
+if (count($argv) < 2) {
+	echo "Import products\n";
+	echo "Usage: product-import.php INPUT_XML\n";
+	exit(1);
+}
+
 // Load File XML
-$product_xml = simplexml_load_file("/home/agus/git/tuneeca-migration/product-migration-conf-all-v2/data/product-xml.xml");
+$xmlFilename = $argv[1];
+echo "Loading $xmlFilename...";
+$product_xml = simplexml_load_file($xmlFilename);
+echo " Loaded.\n";
 foreach ($product_xml as $product ) {
 	$sku = $product->sku;
 	$name = $product->name;
