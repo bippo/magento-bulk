@@ -118,22 +118,19 @@ $variantsData = array();
 foreach ($variantCodes as $variantCode) {
 	if (!preg_match('/^(.+)\\/(.+):(.+)$/', $variantCode, $matches))
 		throw new Exception("Invalid variant code: $variantCode");
-	list($dummy, $color, $size, $qty) = $matches;
-	//var_dump($optionLookup['item_color']);
-	echo "Varian Code Test => ". $variantCode."\n";
-	$color = str_replace("_", " ", $color);
-	echo "Test Color --> " . $optionLookup['item_color'][$color]."\n";
-	if (!isset($optionLookup['item_color'][$color])) {
-		throw new Exception("Cannot find option value for item_color '$color'");
-	}
-	if (!isset($optionLookup['item_size'][$size])) {
-		throw new Exception("Cannot find option value for item_size '$size'");
-	}
-	$sizeId = $optionLookup['item_size'][$size];
-	$variantSku = $sku .' - '. $color .'_'. $size;
-	$variantName = $name .' - '. $color .'_'. $size;
-	echo "Variant $variantSku $variantName: qty=$qty item_color=$colorId:$color item_size=$sizeId:$size\n";
-	$variantsData[] = array(
+		list($dummy, $color, $size, $qty) = $matches;
+		if (!isset($optionLookup['item_color'][$color])) {
+			throw new Exception("Cannot find option value for item_color '$color'");
+		}
+		$colorId = $optionLookup['item_color'][$color];
+		if (!isset($optionLookup['item_size'][$size])) {
+			throw new Exception("Cannot find option value for item_size '$size'");
+		}
+		$sizeId = $optionLookup['item_size'][$size];
+		$variantSku = $sku .'-'. $color .'-'. $size;
+		$variantName = $name .'-'. $color .'-'. $size;
+		echo "Variant $variantSku $variantName: qty=$qty item_color=$colorId:$color item_size=$sizeId:$size\n";
+		$variantsData[] = array(
 			'sku' => $variantSku,
 			'name' => $variantName,
 			'qty' => $qty,

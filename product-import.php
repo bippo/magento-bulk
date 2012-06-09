@@ -25,6 +25,64 @@ Sample input format:
     </product>
     ...
 </products>
+
+Output format:
+
+<jobResult>
+	<productAdd>
+		<model>Product</model>
+		<type>simple</type>
+		<sku>zibalabel_t01-Hitam-Merah</sku>
+		<productId>46</productId>
+	</productAdd>
+	<productAdd>
+		<model>Product</model>
+		<type>configurable</type>
+		<sku>zibalabel_t01</sku>
+		<productId>47</productId>
+	</productAdd>
+<jobResult>
+
+In the future, the <variants> elements should also accept this format:
+
+<variants>
+	<variant>
+		<item_color>Hijau</item_color>
+		<item_size>S</item_size>
+		<qty>43</qty>
+	</variant>
+	<variant>
+		<item_color>Hijau</item_color>
+		<item_size>M</item_size>
+		<qty>20</qty>
+	</variant>
+	<variant>
+		<item_color>Merah</item_color>
+		<item_size>M</item_size>
+		<qty>15</qty>
+	</variant>
+</variants>
+
+or this dynamic style? :
+
+<variants>
+	<variant>
+		<configurableAttribute name="item_color" value="Hijau"/>
+		<configurableAttribute name="item_size" value="Hijau"/>
+		<qty>43</qty>
+	</variant>
+	<variant>
+		<configurableAttribute name="item_color" value="Hijau"/>
+		<configurableAttribute name="item_size" value="M"/>
+		<qty>20</qty>
+	</variant>
+	<variant>
+		<configurableAttribute name="item_color" value="Merah"/>
+		<configurableAttribute name="item_size" value="M"/>
+		<qty>15</qty>
+	</variant>
+</variants>
+
 */
 
 if (count($argv) < 2) {
@@ -57,12 +115,12 @@ echo join(' ', array_keys($categoryLookup)) .". defaults: ". join(' ', $defaultC
 echo "Loading attribute sets...";
 $entityType = Mage::getModel('catalog/product')->getResource()->getEntityType();
 $collection = Mage::getResourceModel('eav/entity_attribute_set_collection')
-->setEntityTypeFilter($entityType->getId());
+	->setEntityTypeFilter($entityType->getId());
 $sets = array();
 foreach ($collection as $attributeSet) {
 	$sets[$attributeSet->getAttributeSetName()] = $attributeSet;
 }
-echo ' '. count($sets) . " found.\n";
+echo ' '. implode(', ', array_keys($sets)) ."\n";
 
 echo "Loading user defined attributes...\n";
 $udAttrs = Mage::getResourceModel('catalog/product_attribute_collection');
@@ -98,15 +156,15 @@ $product_xml = simplexml_load_file($xmlFilename);
 echo " Loaded.\n";
 foreach ($product_xml as $product) {
 	$storeId = !empty($product->store) ? $product->store : DEFAULT_STORE_ID;
-	$sku = $product->sku;
-	$name = $product->name;
-	$price = trim($product->price);
-	$variants = $product->variants;
-	$set = $product->set;
-	$description = $product->description;
-	$summary = $product->summary;
-	$cats = $product->categories;
-	$webs = $product->webs;
+	$sku = (string)$product->sku;
+	$name = (string)$product->name;
+	$price = trim((string)$product->price);
+	$variants = (string)$product->variants;
+	$set = (string)$product->set;
+	$description = (string)$product->description;
+	$summary = (string)$product->summary;
+	$cats = (string)$product->categories;
+	$webs = (string)$product->webs;
 	
 	// Determine website IDs
 	$webCodes = !empty($webs) && $webs != '-' ? explode(',', $webs) : array();
@@ -160,19 +218,16 @@ foreach ($product_xml as $product) {
 			if (!preg_match('/^(.+)\\/(.+):(.+)$/', $variantCode, $matches))
 				throw new Exception("Invalid variant code: $variantCode");
 			list($dummy, $color, $size, $qty) = $matches;
-			//var_dump($optionLookup['item_color']);
-			echo "Varian Code Test => ". $variantCode."\n";
-			$color = str_replace("_", " ", $color);
-			echo "Test Color --> " . $optionLookup['item_color'][$color]."\n";
 			if (!isset($optionLookup['item_color'][$color])) {
 				throw new Exception("Cannot find option value for item_color '$color'");
 			}
+			$colorId = $optionLookup['item_color'][$color];
 			if (!isset($optionLookup['item_size'][$size])) {
 				throw new Exception("Cannot find option value for item_size '$size'");
 			}
 			$sizeId = $optionLookup['item_size'][$size];
-			$variantSku = $sku .' - '. $color .'_'. $size;
-			$variantName = $name .' - '. $color .'_'. $size;
+			$variantSku = $sku .'-'. $color .'-'. $size;
+			$variantName = $name .'-'. $color .'-'. $size;
 			echo "Variant $variantSku $variantName: qty=$qty item_color=$colorId:$color item_size=$sizeId:$size\n";
 			$variantsData[] = array(
 					'sku' => $variantSku,
