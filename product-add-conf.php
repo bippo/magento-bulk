@@ -6,6 +6,7 @@
  * The Attr
  */
 require_once 'init.php';
+require_once 'product_functions.php';
 
 $opts = getopt('', array('sku:', 'name:', 'price:', 'cats:', 'weight:', 'store:', 'set:', 'summary:', 'desc:',
 		'variants:', 'webs:'));
@@ -141,79 +142,20 @@ foreach ($variantCodes as $variantCode) {
 	);
 }
 
-// Create the child products
-$variantIds = array(); // sku => magentoProductId
-$configurableProductsData = array();
-$configurableAttributesData = array(
-		array('attribute_id' => $item_color_attrId, 'attribute_code' => 'item_color', 'position' => 0, 'values' => array() ),
-		array('attribute_id' => $item_size_attrId, 'attribute_code' => 'item_size', 'position' => 1, 'values' => array() )
-);
-foreach ($variantsData as $variantData) {
-	echo "Creating child product {$variantData['sku']}...";
-	$product = Mage::getModel('catalog/product');
-	$product->setStoreId($storeId)
-	->setAttributeSetId($setId)
-	->setTypeId('simple')
-	->setSku($variantData['sku']);
-	$product->setName($variantData['name']);
-	$product->setShortDescription($summary);
-	$product->setDescription($description);
-	$product->setStatus(1);
-	$product->setVisibility(1); // Not Visible Individually
-	$product->setWeight($weight);
-	$product->setPrice($price);
-	$product->setCategoryIds($categoryIds);
-	$product->setTaxClassId(0); // 0=None 2=Taxable Goods 4=Shipping
-	$product->setWebsiteIds($websiteIds);
-	$product->addData(array(
-			'item_color' => $variantData['item_color'],
-			'item_size' => $variantData['item_size'] ));
-
-	// set stock
-	$stockData = array('qty' => $variantData['qty'], 'is_in_stock' => 1,
-			'use_config_manage_stock' => 1, 'use_backorders' => 1);
-	$product->setStockData($stockData);
-
-	$product->save();
-	echo " #{$product->getId()}.\n";
-
-	$configurableProductsData[ $product->getId() ] = array(
-			array('attribute_id' => $item_color_attrId, 'value_index' => $variantData['item_color'] ),
-			array('attribute_id' => $item_size_attrId, 'value_index' => $variantData['item_size'] )
-	);
-	$configurableAttributesData[0]['values'][ $product->getId() ] = array(
-			'value_index' => $variantData['item_color'] );
-	$configurableAttributesData[1]['values'][ $product->getId() ] = array(
-			'value_index' => $variantData['item_size'] );
-}
-
-// Create the parent configurable product
-echo "Creating parent configurable product {$opts['sku']}...";
-
-$product = Mage::getModel('catalog/product');
-$product->setStoreId($storeId)
-->setAttributeSetId($setId)
-->setTypeId('configurable')
-->setSku($opts['sku']);
-$product->setName($name);
-$product->setShortDescription($summary);
-$product->setDescription($description);
-$product->setStatus(1);
-$product->setVisibility(4);
-$product->setWeight($weight);
-$product->setPrice($price);
-$product->setCategoryIds($categoryIds);
-$product->setTaxClassId(0); // 0=None 2=Taxable Goods 4=Shipping
-$product->setWebsiteIds($websiteIds);
-
-// set stock
-$stockData = array('is_in_stock' => 1);
-$product->setStockData($stockData);
-
-// set configurable data
-$product->setConfigurableProductsData($configurableProductsData);
-$product->setConfigurableAttributesData($configurableAttributesData);
-
-$product->save();
-
-echo " #{$product->getId()}.\n";
+// Create the childs products and configurable product
+createConfigurableProduct(
+	array(
+		'item_color_attrId' => $item_color_attrId,
+		'item_size_attrId'  => $item_size_attrId),
+	array(
+		'storeId'		=> $storeId,
+		'setId'			=> $setId,
+		'sku'			=> $opts['sku'],
+		'name'			=> $opts['name'],
+		'summary'		=> $summary,
+		'description'	=> $description,
+		'weight'		=> $weight,
+		'price'			=> $price,
+		'categoryIds'	=> $categoryIds,
+		'websiteIds'	=> $websiteIds),
+	$variantsData);

@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?php
 require_once 'init.php';
+require_once 'product_functions.php';
 
 if (count($argv) < 2) {
 	echo "Import products\n";
