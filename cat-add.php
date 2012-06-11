@@ -27,8 +27,6 @@ $urlkey = $args['urlkey'];
 $name = $args['name'];
 $description = $args['desc'];
 $metaTitle = $args['title'];
-$store = 'default';
-$storeId = 1;
 
 if ($parent != '') {
 	if (!isset($categoryLookup[$parent]))
@@ -38,4 +36,4 @@ if ($parent != '') {
 	$parentId = $defaultParentId;
 }
 
-$categoryId = createCategory($storeId, $parentId, $urlkey, $name, $description, $metaTitle);
+$categoryId = createCategory($parentId, $urlkey, $name, $description, $metaTitle);
