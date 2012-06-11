@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?php
 require_once 'init.php';
+require_once 'category_functions.php';
 
 $args = getopt('', array('parent:', 'urlkey:', 'name:', 'title:', 'desc:'));
 if (empty($args) || empty($args['urlkey']) || empty($args['name'])) {
@@ -27,7 +28,7 @@ $name = $args['name'];
 $description = $args['desc'];
 $metaTitle = $args['title'];
 $store = 'default';
-$storeId = 0;
+$storeId = 1;
 
 if ($parent != '') {
 	if (!isset($categoryLookup[$parent]))
@@ -36,42 +37,5 @@ if ($parent != '') {
 } else {
 	$parentId = $defaultParentId;
 }
-echo 'Parent category ID: '. $parentId ."\n";
 
-$parent_category = Mage::getModel('catalog/category')
-	->setStoreId($storeId)
-	->load($parentId);
-
-echo "Create category $urlkey $name in $parent store $store...";
-
-/* @var $category Mage_Catalog_Model_Category */
-$category = Mage::getModel('catalog/category')
-	->setStoreId($storeId);
-
-$category->setName($name);
-$category->setUrlKey($urlkey);
-$category->setDescription($description);
-$category->setMetaTitle($metaTitle);
-$category->setIsActive(1);
-$category->setIsAnchor(1);
-$category->setAttributeSetId($category->getDefaultAttributeSetId());
-$category->setParentId($parent_category->getId());
-$category->setIncludeInMenu(1);
-$category->setAvailableSortBy(array('position', 'name', 'price'));
-$category->setDefaultSortBy('position');
-$category->addData(array('path'=>implode('/', $parent_category->getPathIds())));
-
-$validate = $category->validate();
-if ($validate !== true) {
-	foreach ($validate as $code => $error) {
-		if ($error === true) {
-			Mage::throwException(Mage::helper('catalog')->__('Attribute "%s" is required.', $code));
-		} else {
-			Mage::throwException($error);
-		}
-	}
-}
-
-$category->save();
-
-echo " #{$category->getId()}\n";
+$categoryId = createCategory($storeId, $parentId, $urlkey, $name, $description, $metaTitle);
