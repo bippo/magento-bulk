@@ -20,6 +20,15 @@ bc. ./attr-list.php -u
 
 On a blank Magento installation this will list only 3 attributes: @color@, @cost@, and @manufacturer@.
 
+h3. Create Normal Data Attribute
+
+bc. ./attr-add.php --code length --label 'Panjang (cm)' --type data --datatype decimal --normal
+./attr-add.php --code shop_id --label 'Shop ID' --type data --datatype varchar --normal
+./attr-add.php --code local_sku --label 'Local SKU' --type data --datatype varchar --normal
+./attr-add.php --code local_price --label 'Local Price' --type data --datatype decimal --normal
+
+Note: @--normal@ switch is optional (it's the default).
+
 h3. Create Normal Select Attribute
 
 bc. ./attr-add.php --code material --label Bahan --type select --normal --opts Katun,Sutra,Rayon,Spandex
