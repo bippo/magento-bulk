@@ -20,14 +20,14 @@ bc. ./attr-list.php -u
 
 On a blank Magento installation this will list only 3 attributes: @color@, @cost@, and @manufacturer@.
 
-h3. Create Attribute
+h3. Create Configurable Select Attribute
 
-bc. ./attr-add.php --code item_color --label Warna --opts Biru,Hijau,Merah,Putih,Hitam,Kuning,Ungu,Abu-abu
-./attr-add.php --code item_size --label Ukuran --opts SS,S,M,L,XL,XXL
+bc. ./attr-add.php --code item_color --label Warna --type select --configurable --opts Biru,Hijau,Merah,Putih,Hitam,Kuning,Ungu,Abu-abu
+./attr-add.php --code item_size --label Ukuran --type select --configurable --opts SS,S,M,L,XL,XXL
 
 h3. Delete Attribute
 
-bc. ./attr-del.php item_color
+bc. ./attr-del.php item_color item_size
 
 Multiple arguments are supported to delete several attributes at once.
 
