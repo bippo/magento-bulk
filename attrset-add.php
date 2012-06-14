@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?php
 require_once 'lib/init.php';
+require_once 'lib/attributeset_functions.php';
 
 $opts = getopt('', array('name:', 'base:', 'attrs:'));
 if (empty($opts) || empty($opts['name'])) {
@@ -41,37 +42,16 @@ if (!isset($sets[$baseName])) {
 }
 $skeletonSetId = $sets[$baseName]->getId();
 
-// get catalog product entity type id
-$entityTypeId = Mage::getModel('catalog/product')->getResource()->getTypeId();
-/** @var $attributeSet Mage_Eav_Model_Entity_Attribute_Set */
-$attributeSet = Mage::getModel('eav/entity_attribute_set')
-	->setEntityTypeId($entityTypeId)
-	->setAttributeSetName($name);
-// check if name is valid
-$attributeSet->validate();
-// copy parameters to new set from skeleton set
-$attributeSet->save();
-$attributeSet->initFromSkeleton($skeletonSetId)->save();
-echo "Created attribute set #{$attributeSet->getId()}.\n";
-
-$sortOrder = 30;
+$attributeIds = array();
 foreach ($attrCodes as $attrCode) {
-	echo "Adding $attrCode order $sortOrder...";
+	echo "Lookup $attrCode...";
 	if (!isset($udAttrLookup[$attrCode])) {
 		echo "Attribute $attrCode not found, skipping!\n";
 		continue;
 	}
-    // check if attribute with requested id exists
-    /* @var $attribute Mage_Eav_Model_Entity_Attribute */
-	$attribute = Mage::getModel('eav/entity_attribute')->load($udAttrLookup[$attrCode]->getId());
-	
-	$attributeGroupId = $attributeSet->getDefaultGroupId();
-	$attribute->setAttributeSetId($attributeSet->getId())->loadEntityAttributeIdBySet();
-	$attribute->setEntityTypeId($attributeSet->getEntityTypeId())
-		->setAttributeSetId($attributeSet->getId())
-		->setAttributeGroupId($attributeGroupId)
-		->setSortOrder($sortOrder)
-		->save();
-	echo " Added.\n";
-	$sortOrder++;
+	$attributeId = $udAttrLookup[$attrCode]->getId();
+	echo " $attributeId\n";
+	$attributeIds[] = $attributeId;
 }
+
+createAttributeSet($skeletonSetId, $name, $attributeIds);
