@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-require_once 'init.php';
+require_once 'lib/init.php';
 
 $args = getopt('', array('code:', 'label:', 'opts:'));
 if (empty($args) || empty($args['code']) || empty($args['label']) || empty($args['opts'])) {

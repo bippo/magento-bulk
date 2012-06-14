@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-require_once 'init.php';
+require_once 'lib/init.php';
 
 if (count($argv) < 2) {
 	echo "Delete attributes\n";

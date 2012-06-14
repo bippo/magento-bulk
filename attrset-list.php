@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-require_once 'init.php';
+require_once 'lib/init.php';
 
 echo "List all product attribute sets\n";
 $entityType = Mage::getModel('catalog/product')->getResource()->getEntityType();

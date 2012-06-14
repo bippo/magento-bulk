@@ -5,8 +5,8 @@
  * The Attribute Set code is predefined.
  * The Attr
  */
-require_once 'init.php';
-require_once 'product_functions.php';
+require_once 'lib/init.php';
+require_once 'lib/product_functions.php';
 
 $opts = getopt('', array('sku:', 'name:', 'price:', 'cats:', 'weight:', 'store:', 'set:', 'summary:', 'desc:',
 		'variants:', 'webs:'));

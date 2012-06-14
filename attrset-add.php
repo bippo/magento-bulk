@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-require_once 'init.php';
+require_once 'lib/init.php';
 
 $opts = getopt('', array('name:', 'base:', 'attrs:'));
 if (empty($opts) || empty($opts['name'])) {

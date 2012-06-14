@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-require_once 'init.php';
+require_once 'lib/init.php';
 
 echo "List all products with stock\n";
 $products = Mage::getModel('catalog/product')->getCollection();

@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
-require_once 'init.php';
-require_once 'product_functions.php';
+require_once 'lib/init.php';
+require_once 'lib/product_functions.php';
 
 /*
 Sample input format:

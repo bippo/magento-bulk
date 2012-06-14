@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
-require_once 'init.php';
-require_once 'category_functions.php';
+require_once 'lib/init.php';
+require_once 'lib/category_functions.php';
 
 $args = getopt('', array('parent:', 'urlkey:', 'name:', 'title:', 'desc:'));
 if (empty($args) || empty($args['urlkey']) || empty($args['name'])) {

@@ -1,6 +1,6 @@
 <?php
 echo "Loading Magento...";
-require_once 'config.php';
+require_once '../config.php';
 require_once MAGENTO_HOME . '/app/Mage.php';
 
 Mage::init('admin');
