@@ -29,6 +29,10 @@ bc. ./attr-add.php --code length --label 'Panjang (cm)' --type data --datatype d
 
 Note: @--normal@ switch is optional (it's the default).
 
+h3. Create Configurable Data Attribute
+
+bc. ./attr-add.php --code branding --label 'Branding' --type data --datatype varchar --configurable
+
 h3. Create Normal Select Attribute
 
 bc. ./attr-add.php --code material --label Bahan --type select --normal --opts Katun,Sutra,Rayon,Spandex
@@ -42,9 +46,15 @@ bc. ./attr-add.php --code item_color --label Warna --type select --configurable 
 
 h3. Delete Attribute
 
-bc. ./attr-del.php item_color item_size
+bc. ./attr-del.php item_color
 
 Multiple arguments are supported to delete several attributes at once.
+
+bc. ./attr-del.php item_color item_size material length local_sku local_price
+
+h3. Import Attributes from XML
+
+bc. ./attr-import.php ~/git/bippo-models/commerce/berbatik-attr-01.xml 
 
 
 h2. Product Attribute Set Management
@@ -146,3 +156,7 @@ bc. ./product-del.php zibalabel_t4
 h3. Delete All Products (WARNING! DANGEROUS)
 
 bc. ./product-clear.php
+
+h3. Import Products from XML
+
+bc. ./attr-import.php ~/git/bippo-models/commerce/berbatik-product-01.xml

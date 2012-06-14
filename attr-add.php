@@ -18,15 +18,15 @@ if (empty($args) || empty($args['code']) || empty($args['label'])) {
 $code = $args['code'];
 $label = $args['label'];
 $type = $args['type'];
-$datatype = isset($args['datatype']) ? $args['datatype'] : null;
 $configurable = isset($args['configurable']);
-$options = isset($args['opts']) ? split(',', $args['opts']) : array();
 
 switch ($type) {
 	case 'data':
+		$datatype = isset($args['datatype']) ? $args['datatype'] : null;
 		createDataAttribute($code, $label, $datatype, $configurable);
 		break;
 	case 'select':
+		$options = isset($args['opts']) ? split(',', $args['opts']) : array();
 		createSelectAttribute($code, $label, $configurable, $options);
 		break;
 	default:
