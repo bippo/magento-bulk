@@ -38,7 +38,7 @@ echo "Create attribute set $name base: $baseName attrs: $attrs\n";
 
 // check if set with requested $skeletonSetId exists
 if (!isset($sets[$baseName])) {
-	throw new Exception("Cannot find attribute set '$baseName");
+	throw new Exception("Cannot find base attribute set '$baseName'");
 }
 $skeletonSetId = $sets[$baseName]->getId();
 
