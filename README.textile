@@ -20,6 +20,12 @@ bc. ./attr-list.php -u
 
 On a blank Magento installation this will list only 3 attributes: @color@, @cost@, and @manufacturer@.
 
+h3. Create Normal Select Attribute
+
+bc. ./attr-add.php --code material --label Bahan --type select --normal --opts Katun,Sutra,Rayon,Spandex
+
+Note: @--normal@ switch is optional (it's the default).
+
 h3. Create Configurable Select Attribute
 
 bc. ./attr-add.php --code item_color --label Warna --type select --configurable --opts Biru,Hijau,Merah,Putih,Hitam,Kuning,Ungu,Abu-abu

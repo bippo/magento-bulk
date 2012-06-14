@@ -17,4 +17,4 @@ $type = $args['type'];
 $configurable = isset($args['configurable']);
 $opts = isset($args['opts']) ? split(',', $args['opts']) : array();
 
-createSelectAttribute($code, $label, true, $opts);
+createSelectAttribute($code, $label, $configurable, $opts);
