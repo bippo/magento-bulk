@@ -214,7 +214,10 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	$filename = md5($image_url).'.'.$image_type;
 	$filepath = Mage::getBaseDir('media') . DS . 'import'. DS . $filename;
 	file_put_contents($filepath, file_get_contents(trim($image_url)));
-	$product->addImageToMediaGallery($filepath, $visibility = array('image'), true, false);
+	//$product->addImageToMediaGallery($filepath, $visibility = array('image'), true, false);
+	$productImg = Mage::getModel('catalog/product/attribute/media/api');
+	$productImg->createImageProductFromUrl($product->getId(), "Name Of Product", $productImage, "");
+	
 	$product->save();
 	
 	echo " #{$product->getId()}.\n";
