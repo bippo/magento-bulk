@@ -259,5 +259,5 @@ foreach ($product_xml as $product) {
 	} else {
 		throw new Exception("Unknown product type: {$product->type} for {$product->sku}\n");
 	}
-
+	
 }
