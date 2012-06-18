@@ -185,7 +185,7 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	echo "Creating parent configurable product {$parentSku}...";
 
 	$product = Mage::getModel('catalog/product');
-	$product->setStoreId($storeId)
+	$product->setStoreId(0) //$storeId
 	->setAttributeSetId($setId)
 	->setTypeId('configurable')
 	->setSku($parentSku);
@@ -203,10 +203,6 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	// set stock
 	$stockData = array('is_in_stock' => 1);
 	$product->setStockData($stockData);
-
-	// set configurable data
-	$product->setConfigurableProductsData($configurableProductsData);
-	$product->setConfigurableAttributesData($configurableAttributesData);
 	
 	// Set image
 	$image_url = $productImage;
@@ -214,10 +210,23 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	$filename = md5($image_url).'.'.$image_type;
 	$filepath = Mage::getBaseDir('media') . DS . 'import'. DS . $filename;
 	file_put_contents($filepath, file_get_contents(trim($image_url)));
-	//$product->addImageToMediaGallery($filepath, $visibility = array('image'), true, false);
-	$productImg = Mage::getModel('catalog/product/attribute/media/api');
-	$productImg->createImageProductFromUrl($product->getId(), "Name Of Product", $productImage, "");
+	$product->addImageToMediaGallery($filepath, null, true, false);
 	
+	// Set Attribute image
+	$gallery = $product->getData('media_gallery');
+	$lastImage = array_pop($gallery['images']);
+	$lastImage['label'] = $parentSku.'-'.$name;
+	$lastImage['position'] = 1;
+	$lastImage['types'] = array('small_image');
+	$lastImage['exclude'] = 0;
+	array_push($gallery['images'], $lastImage);
+	$product->setData('media_gallery', $gallery);
+
+	// set configurable data
+	$product->setConfigurableProductsData($configurableProductsData);
+	$product->setConfigurableAttributesData($configurableAttributesData);
+	
+	// Save product
 	$product->save();
 	
 	echo " #{$product->getId()}.\n";
