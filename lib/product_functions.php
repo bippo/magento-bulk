@@ -126,10 +126,6 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	$websiteIds = $productData['websiteIds'];
 	$productImage = $productData['productImage'];
 
-	// types
-	$types = array('image', 'small_image', 'thumbnail');
-	$mimetype = "image/jpeg";
-
 	// To hold results
 	$result = array();
 
@@ -210,14 +206,14 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	$filename = md5($image_url).'.'.$image_type;
 	$filepath = Mage::getBaseDir('media') . DS . 'import'. DS . $filename;
 	file_put_contents($filepath, file_get_contents(trim($image_url)));
-	$product->addImageToMediaGallery($filepath, null, true, false);
+	$product->addImageToMediaGallery($filepath, array('image', 'small_image', 'thumbnail'), true, false);
 	
 	// Set Attribute image
 	$gallery = $product->getData('media_gallery');
 	$lastImage = array_pop($gallery['images']);
 	$lastImage['label'] = $parentSku.'-'.$name;
 	$lastImage['position'] = 1;
-	$lastImage['types'] = array('small_image');
+	$lastImage['types'] = array('image','small_image','thumbnail');
 	$lastImage['exclude'] = 0;
 	array_push($gallery['images'], $lastImage);
 	$product->setData('media_gallery', $gallery);
