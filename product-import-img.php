@@ -97,7 +97,7 @@ $websiteLookup = array();
 foreach ($websites as $website) {
 	$websiteLookup[$website->getCode()] = $website->getWebsiteId();
 }
-echo 'x '. join(' ', array_keys($websiteLookup)) ."\n";
+echo ' '. join(' ', array_keys($websiteLookup)) ."\n";
 
 echo 'Loading categories...';
 $categories = Mage::getModel('catalog/category')->getCollection()
@@ -166,11 +166,12 @@ foreach ($product_xml as $product) {
 	$description = (string)$product->description;
 	$cats = (string)$product->categories;
 	$webs = (string)$product->webs;
-	echo $productImage = (string)$product->images;
+	$productImage = (string)$product->images;
 	
 	// Determine website IDs
 	$webCodes = !empty($webs) && $webs != '-' ? explode(',', $webs) : array();
 	$websiteIds = array();
+	var_dump($webCodes);
 	foreach ($webCodes as $webCode) {
 		if (!isset($websiteLookup[$webCode]))
 			throw new Exception("Cannot find website '$webCode'");
