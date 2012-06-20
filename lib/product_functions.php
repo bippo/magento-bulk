@@ -201,23 +201,24 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	$product->setStockData($stockData);
 	
 	// Set image
-	$image_url = $productImage;
-	$image_type = substr(strrchr($image_url,"."),1);
-	$filename = md5($image_url).'.'.$image_type;
-	$filepath = Mage::getBaseDir('media') . DS . 'import'. DS . $filename;
-	file_put_contents($filepath, file_get_contents(trim($image_url)));
-	$product->addImageToMediaGallery($filepath, array('image', 'small_image', 'thumbnail'), true, false);
-	
-	// Set Attribute image
-	$gallery = $product->getData('media_gallery');
-	$lastImage = array_pop($gallery['images']);
-	$lastImage['label'] = $parentSku.'-'.$name;
-	$lastImage['position'] = 1;
-	$lastImage['types'] = array('image','small_image','thumbnail');
-	$lastImage['exclude'] = 0;
-	array_push($gallery['images'], $lastImage);
-	$product->setData('media_gallery', $gallery);
-
+	if ($productImage != "-") {
+		$image_url = $productImage;
+		$image_type = substr(strrchr($image_url,"."),1);
+		$filename = md5($image_url).'.'.$image_type;
+		$filepath = Mage::getBaseDir('media') . DS . 'import'. DS . $filename;
+		file_put_contents($filepath, file_get_contents(trim($image_url)));
+		$product->addImageToMediaGallery($filepath, array('image', 'small_image', 'thumbnail'), true, false);
+		
+		// Set Attribute image
+		$gallery = $product->getData('media_gallery');
+		$lastImage = array_pop($gallery['images']);
+		$lastImage['label'] = $parentSku.'-'.$name;
+		$lastImage['position'] = 1;
+		$lastImage['types'] = array('image','small_image','thumbnail');
+		$lastImage['exclude'] = 0;
+		array_push($gallery['images'], $lastImage);
+		$product->setData('media_gallery', $gallery);
+	}
 	// set configurable data
 	$product->setConfigurableProductsData($configurableProductsData);
 	$product->setConfigurableAttributesData($configurableAttributesData);
