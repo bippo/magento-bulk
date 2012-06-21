@@ -1,6 +1,11 @@
 <?php
 echo "Loading Magento...";
 require_once 'config.php';
+
+if (!defined('MAGENTO_HOME')) {
+	throw new Exception("Please define MAGENTO_HOME in config.php"); 
+}
+
 require_once MAGENTO_HOME . '/app/Mage.php';
 
 Mage::init('admin');

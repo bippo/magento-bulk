@@ -1,4 +1,7 @@
 <?php
+# MAGENTO_HOME can be defined statically
 define('MAGENTO_HOME', '/home/ceefour/public_html/berbatik');
+# MAGENTO_HOME can also be defined via environment
+#define('MAGENTO_HOME', getenv('MAGENTO_HOME'));
 define('DEFAULT_STORE_ID', 1);
 define('DEFAULT_ATTRIBUTE_SET_ID', 4);
