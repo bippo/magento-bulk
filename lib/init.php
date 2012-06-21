@@ -1,6 +1,6 @@
 <?php
 echo "Loading Magento...";
-require_once 'config.php';
+require_once dirname(__FILE__) . '/../config.php';
 
 if (!defined('MAGENTO_HOME')) {
 	throw new Exception("Please define MAGENTO_HOME in config.php"); 
