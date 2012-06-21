@@ -97,7 +97,7 @@ $websiteLookup = array();
 foreach ($websites as $website) {
 	$websiteLookup[$website->getCode()] = $website->getWebsiteId();
 }
-echo 'x '. join(' ', array_keys($websiteLookup)) ."\n";
+echo ' '. join(' ', array_keys($websiteLookup)) ."\n";
 
 echo 'Loading categories...';
 $categories = Mage::getModel('catalog/category')->getCollection()
@@ -166,10 +166,12 @@ foreach ($product_xml as $product) {
 	$description = (string)$product->description;
 	$cats = (string)$product->categories;
 	$webs = (string)$product->webs;
+	$productImage = (string)$product->images;
 	
 	// Determine website IDs
 	$webCodes = !empty($webs) && $webs != '-' ? explode(',', $webs) : array();
 	$websiteIds = array();
+	var_dump($webCodes);
 	foreach ($webCodes as $webCode) {
 		if (!isset($websiteLookup[$webCode]))
 			throw new Exception("Cannot find website '$webCode'");
@@ -210,7 +212,6 @@ foreach ($product_xml as $product) {
 			'websiteIds'	=> $websiteIds));
 	} else if ($product->type == 'configurable') {
 		echo "Create configurable product $sku name: $name set: $set price: $price variants: $variants cats: $cats webs: $webs\n";
-		
 		$variantCodes = explode(',', $variants);
 		
 		// Generate the child products
@@ -219,6 +220,7 @@ foreach ($product_xml as $product) {
 			if (!preg_match('/^(.+)\\/(.+):(.+)$/', $variantCode, $matches))
 				throw new Exception("Invalid variant code: $variantCode");
 			list($dummy, $color, $size, $qty) = $matches;
+			$color = str_replace("_", " ", $color);
 			if (!isset($optionLookup['item_color'][$color])) {
 				throw new Exception("Cannot find option value for item_color '$color'");
 			}
@@ -227,8 +229,8 @@ foreach ($product_xml as $product) {
 				throw new Exception("Cannot find option value for item_size '$size'");
 			}
 			$sizeId = $optionLookup['item_size'][$size];
-			$variantSku = $sku .'-'. $color .'-'. $size;
-			$variantName = $name .'-'. $color .'-'. $size;
+			$variantSku = $sku .' - '. $color .'_'. $size;
+			$variantName = $name .' - '. $color .'_'. $size;
 			echo "Variant $variantSku $variantName: qty=$qty item_color=$colorId:$color item_size=$sizeId:$size\n";
 			$variantsData[] = array(
 					'sku' => $variantSku,
@@ -254,6 +256,7 @@ foreach ($product_xml as $product) {
 				'weight'		=> $weight,
 				'price'			=> $price,
 				'categoryIds'	=> $categoryIds,
+				'productImage'  => $productImage,
 				'websiteIds'	=> $websiteIds),
 			$variantsData);
 	} else {
