@@ -25,11 +25,27 @@ foreach ($attrsXml as $attrEl) {
 	switch ($type) {
 		case 'data':
 			$datatype = (string) $attrEl->datatype;
-			if ($datatype == 'string')
-				$datatype = 'varchar';
-			if ($datatype == 'double')
-				$datatype = 'decimal';
-			createDataAttribute($code, $label, $datatype, $configurable);
+			$backendTypes = array(
+				'string'	=> 'varchar',
+				'varchar'	=> 'varchar',
+				'int'		=> 'int',
+				'decimal'	=> 'decimal',
+				'double'	=> 'decimal',
+				'datetime'	=> 'datetime',
+				'text'		=> 'text',
+				'currency'	=> 'decimal');
+			$frontendInputs = array(
+				'string'	=> 'text',
+				'varchar'	=> 'text',
+				'int'		=> 'text',
+				'decimal'	=> 'text',
+				'double'	=> 'text',
+				'datetime'	=> 'date',
+				'text'		=> 'textarea',
+				'currency'	=> 'price');
+			createDataAttribute($code, $label,
+					$backendTypes[$datatype], $frontendInputs[$datatype],
+					$configurable);
 			break;
 		case 'select':
 			$optionsStr = (string) $attrEl->options;;
