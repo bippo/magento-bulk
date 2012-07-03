@@ -334,6 +334,7 @@ foreach ($product_xml as $product) {
 			'qty'			=> $qty),
 			$additionalData,
 			$imageFiles);
+		die(0);
 	} else if ($product->type == 'configurable') {
 		echo "Create configurable product $sku name: $name set: $set price: $price variants: $variants cats: $cats webs: $webs\n";
 		$variantCodes = explode(',', $variants);

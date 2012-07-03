@@ -135,7 +135,6 @@ Specific website(s) only:
 
 bc. ./product-add-simple.php --sku zibalabel_t62 --name 'Tas Batik TX5' --price 125400 --qty 123 --cats tas,handbag --webs tuneeca
 
-
 h3. Create Configurable Product with item_color and item_size configurable attributes
 
 For all websites, omit the @--webs@ parameter:
@@ -157,6 +156,14 @@ h3. Delete All Products (WARNING! DANGEROUS)
 
 bc. ./product-clear.php
 
+To delete 832 products on i7-2630QM, takes about ~ real 3m38.357s.
+
 h3. Import Products from XML
 
-bc. ./attr-import.php ~/git/bippo-models/commerce/berbatik-product-01.xml
+bc. ./product-import.php ~/git/bippo-models/commerce/berbatik-product-01.xml
+
+h3. Import Products with Images from XML
+
+bc. ./product-import-img2.php ~/git/bippo-models/commerce/berbatik-product-02.xml
+
+Importing 832 simple products on i7-2630QM takes about 30 minutes.
