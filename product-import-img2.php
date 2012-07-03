@@ -139,8 +139,6 @@ foreach ($categories as $cat) {
 }
 echo join(' ', array_keys($categoryLookup)) .". defaults: ". join(' ', $defaultCategoryIds) . "\n";
 
-exit(1);
-
 echo "Loading attribute sets...";
 $entityType = Mage::getModel('catalog/product')->getResource()->getEntityType();
 $collection = Mage::getResourceModel('eav/entity_attribute_set_collection')
@@ -160,6 +158,8 @@ $optionLookup = array();
 foreach ($udAttrs as $attr) {
 	$udAttrCodes[] = $attr->getAttributeCode();
 	$udAttrLookup[$attr->getAttributeCode()] = $attr;
+	
+	// if it's a select attribute, map the options
 	if ($attr->usesSource()) {
 		$valueLookup = array();
 		$source = $attr->getSource();
@@ -227,6 +227,85 @@ foreach ($product_xml as $product) {
 	echo "Attribute set ID: $setId\n";
 
 	if ($product->type == 'simple') {
+		$qty = (string)$product->qty;
+		if ($qty == '') {
+			echo "WARNING: $sku/$name has no qty! Setting to 1";
+		}
+		
+		$additionalData = array();
+		// Select attributes:
+		//   batik_age, batik_technique, (color=not used), condition,
+		//   item_color, item_size, leather, lining, (manufacturer=not used),
+		//   material, motif, origin, shoe_size, signature
+		if ($product->batikAge != '')
+			$additionalData['batik_age'] = $optionLookup['batik_age'][(string)$product->batikAge];
+		if ($product->batikTechnique != '')
+			$additionalData['batik_technique'] = $optionLookup['batik_technique'][(string)$product->batikTechnique];
+		if ($product->condition != '')
+			$additionalData['condition'] = $optionLookup['condition'][(string)$product->condition];
+		if ($product->item_color != '')
+			$additionalData['item_color'] = $optionLookup['item_color'][(string)$product->itemColor];
+		if ($product->item_size != '')
+			$additionalData['item_size'] = $optionLookup['item_size'][(string)$product->itemSize];
+		if ($product->leather != '')
+			$additionalData['leather'] = $optionLookup['leather'][(string)$product->leather];
+		if ($product->lining != '')
+			$additionalData['lining'] = $optionLookup['lining'][(string)$product->lining];
+		if ($product->material != '')
+			$additionalData['material'] = $optionLookup['material'][(string)$product->material];
+		if ($product->motif != '')
+			$additionalData['motif'] = $optionLookup['motif'][(string)$product->motif];
+		if ($product->origin != '')
+			$additionalData['origin'] = $optionLookup['origin'][(string)$product->origin];
+		if ($product->shoeSize != '')
+			$additionalData['shoe_size'] = $optionLookup['shoe_size'][(string)$product->shoeSize];
+		if ($product->signature != '')
+			$additionalData['signature'] = $optionLookup['signature'][(string)$product->signature];
+		
+		// Literal attributes:
+		//   bust_size, cost, dress_length, heels_height,
+		//   width, height, length, local_price, local_sku,
+		//   net_height, net_length, net_weight, net_width,
+		//   shawl_length, shawl_width,
+		//   shoe_measurement, shop_id, waist_size
+		if ($product->bust_size != '')
+			$additionalData['bust_size'] = (string)$product->signature;
+		if ($product->cost != '')
+			$additionalData['cost'] = (string)$product->cost;
+		if ($product->dress_length != '')
+			$additionalData['dress_length'] = (string)$product->dressLength;
+		if ($product->heels_height != '')
+			$additionalData['heels_height'] = (string)$product->heelsHeight;
+		if ($product->width != '')
+			$additionalData['width'] = (string)$product->width;
+		if ($product->height != '')
+			$additionalData['height'] = (string)$product->height;
+		if ($product->length != '')
+			$additionalData['length'] = (string)$product->length;
+		if ($product->localPrice != '')
+			$additionalData['local_price'] = (string)$product->localPrice;
+		if ($product->localSku != '')
+			$additionalData['local_sku'] = (string)$product->localSku;
+		if ($product->netHeight != '')
+			$additionalData['net_height'] = (string)$product->netHeight;
+		if ($product->netLength != '')
+			$additionalData['net_length'] = (string)$product->netLength;
+		if ($product->netWeight != '')
+			$additionalData['net_weight'] = (string)$product->netWeight;
+		if ($product->netWidth!= '')
+			$additionalData['net_width'] = (string)$product->netWidth;
+		if ($product->shawlLength != '')
+			$additionalData['shawl_length'] = (string)$product->shawlLength;
+		if ($product->shawlWidth != '')
+			$additionalData['shawl_width'] = (string)$product->shawlWidth;
+		if ($product->shoeMeasurement != '')
+			$additionalData['shoe_measurement'] = (string)$product->shoeMeasurement;
+		if ($product->shopId != '')
+			$additionalData['shop_id'] = (string)$product->shopId;
+		if ($product->waistSize != '')
+			$additionalData['waistSize'] = (string)$product->waistSize;
+
+		var_dump($additionalData);
 		echo "Create simple product $sku name: $name price: $price qty: $qty cats: $cats webs: $webs\n";
 		createSimpleProduct(array(
 			'storeId'		=> $storeId,
@@ -238,7 +317,10 @@ foreach ($product_xml as $product) {
 			'weight'		=> $weight,
 			'price'			=> $price,
 			'categoryIds'	=> $categoryIds,
-			'websiteIds'	=> $websiteIds));
+			'websiteIds'	=> $websiteIds,
+			'qty'			=> 1),
+			$additionalData);
+		exit(0);
 	} else if ($product->type == 'configurable') {
 		echo "Create configurable product $sku name: $name set: $set price: $price variants: $variants cats: $cats webs: $webs\n";
 		$variantCodes = explode(',', $variants);

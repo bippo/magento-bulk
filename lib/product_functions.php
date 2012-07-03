@@ -3,39 +3,25 @@
 /**
  * Create simple product
  *
- * @param array $modelData Model data as map: item_color_attrId, item_size_attrId.
- *   Example: <code>array('item_color_attrId' => 123, 'item_size_attrId' => 145)</code>
  * @param array $productData Product data as map: storeId, setId, sku, name, summary, description, weight, price, categoryIds, websiteIds,
  *   Example: <pre>
  *   array(
- *     'storeId' => 1,
- *     'setId' => 9,
- *     'sku' => 'zibalabel_t01',
- *     'name' => 'Ziba Label T01',
- *     'summary' => 'Tas yang sangat bagus dan lucu',
- *     'description' => 'Cocok untuk dipakai belanja',
- *     'weight' => 5,
- *     'price' => 98000,
- *     'categoryIds' => array(4, 5),
- *     'websiteIds' => array(1, 2)
+ *     'storeId'		=> 1,
+ *     'setId'			=> 9,
+ *     'sku'			=> 'zibalabel_t01',
+ *     'name'			=> 'Ziba Label T01',
+ *     'summary'		=> 'Tas yang sangat bagus dan lucu',
+ *     'description'	=> 'Cocok untuk dipakai belanja',
+ *     'weight'			=> 5,
+ *     'price'			=> 98000.0,
+ *     'categoryIds'	=> array(4, 5),
+ *     'websiteIds'		=> array(1, 2),
+ *     'qty'			=> 1
  *   )</pre>
- * @param array $variantsData Variant data as array. Each element is a map with sku, name, item_qty, item_size, and qty.
- *   Example: <pre>
- *   array(
- *     array('sku' => 'zibalabel_t01-Hitam-XL',
- *           'name' => 'Ziba Label T01-Hitam-XL',
- *           'item_color' => 'Hitam',
- *           'item_size' => 'XL',
- *           'qty' => 5),
- *     array('sku' => 'zibalabel_t01-Merah-L',
- *           'name' => 'Ziba Label T01-Merah-L',
- *           'item_color' => 'Merah',
- *           'item_size' => 'L',
- *           'qty' => 5)
- *  )</pre>
+ * @param array $additionalData Additional data, for example values for user-defined attributes.
  *  @return int Product ID.
  */
-function createSimpleProduct($productData) {
+function createSimpleProduct($productData, $additionalData = array()) {
 	// Read parameters
 	$storeId = $productData['storeId'];
 	$setId = $productData['setId'];
@@ -47,12 +33,13 @@ function createSimpleProduct($productData) {
 	$price = $productData['price'];
 	$categoryIds = $productData['categoryIds'];
 	$websiteIds = $productData['websiteIds'];
+	$qty = $productData['qty'];
 
 	$product = Mage::getModel('catalog/product');
 	$product->setStoreId($storeId)		// is Product.storeId deprecated? seems weird, bcuz Product can be assigned to multiple Websites now
-	->setAttributeSetId($setId)
-	->setTypeId('simple')
-	->setSku($sku);
+		->setAttributeSetId($setId)
+		->setTypeId('simple')
+		->setSku($sku);
 	$product->setName($name);
 	$product->setShortDescription($summary);
 	$product->setDescription($description);
@@ -63,6 +50,8 @@ function createSimpleProduct($productData) {
 	$product->setCategoryIds($categoryIds);
 	$product->setTaxClassId(0); // 0=None 2=Taxable Goods 4=Shipping
 	$product->setWebsiteIds($websiteIds);
+	
+	$product->addData($additionalData);
 
 	// set stock
 	$stockData = array('qty' => $qty, 'is_in_stock' => 1, 'use_config_manage_stock' => 1, 'use_backorders' => 1);

@@ -11,6 +11,12 @@
 *  @return int Category ID.
 */
 function createCategory($parentId, $urlkey, $name, $description, $metaTitle) {
+	// Sanity checks
+	if ($urlkey == '')
+		throw new Exception("Please provide urlkey");
+	if ($name == '')
+		throw new Exception("Please provide name");
+	
 	// This must be 0. Otherwise you won't be able to set description, and probably won't work properly.
 	$storeId = 0;
 	
