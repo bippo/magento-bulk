@@ -19,7 +19,7 @@
  *     'urlKey'			=> 'zibalabel-t01',
  *     'qty'			=> 1
  *   )</pre>
- * @param array $additionalData Additional data, for example values for user-defined attributes.
+ * @param array $additionalData Additional data, for example values for user-defined attributes, e.g. cost.
  *  @return int Product ID.
  */
 function createSimpleProduct($productData, $additionalData = array()) {

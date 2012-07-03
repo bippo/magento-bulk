@@ -268,13 +268,15 @@ foreach ($product_xml as $product) {
 			$additionalData['signature'] = $optionLookup['signature'][(string)$product->signature];
 		
 		// Literal attributes:
-		//   bust_size, cost, dress_length, heels_height,
+		//   shipping_policy, bust_size, cost, dress_length, heels_height,
 		//   width, height, length, local_price, local_sku,
 		//   net_height, net_length, net_weight, net_width,
 		//   shawl_length, shawl_width,
 		//   shoe_measurement, shop_id, waist_size
-		if ($product->bust_size != '')
-			$additionalData['bust_size'] = (string)$product->signature;
+		if ($product->shippingPolicy != '')
+			$additionalData['shipping_policy'] = (string)$product->shippingPolicy;
+		if ($product->bustSize != '')
+			$additionalData['bust_size'] = (string)$product->bustSize;
 		if ($product->cost != '')
 			$additionalData['cost'] = (string)$product->cost;
 		if ($product->dress_length != '')
