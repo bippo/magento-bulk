@@ -10,37 +10,40 @@ require_once 'lib/product_functions.php';
 /*
 Sample input format:
  
-<?xml version="1.0" encoding="UTF-8"?>
 <commerce:ProductCatalog xmlns:commerce="http://commerce/1.0">
   <Product>
     <type>simple</type>
-    <sku>batik_wirda_halim_lavita-fabric-30</sku>
-    <slug>batik-wirda-halim-lavita-fabric-30</slug>
+    <sku>surya_kencana_batik_art_voila-fabric-44</sku>
+    <slug>surya-kencana-batik-art-voila-fabric-44</slug>
     <set>Fabric</set>
-    <name>Lavita Fabric 30</name>
-    <price>1050000</price>
-    <categories>fabric,fabric/batik</categories>
-    <weight>0.6</weight>
-    <length>21.0</length>
-    <height>20.0</height>
-    <width>23.0</width>
+    <name>Voila Fabric 44</name>
+    <price>723600</price>
+    <cost>603000</cost>
+    <categories>fabric,fabric/songket</categories>
+    <weight>0.7</weight>
+    <length>43.0</length>
+    <height>31.0</height>
+    <width>40.0</width>
+    <summary>Batik Yogyakarta adalah salah satu dari batik Indonesia yang sarat akan makna.</summary>
     <description>Batik Yogyakarta adalah salah satu dari batik Indonesia yang pada awalnya dibuat terbatas hanya untuk kalangan keluarga keraton saja.
-Setiap motif yang terujud dalam goresan canting pada kain batik Yogyakarta adalah sarat akan makna, adalah cerita.
+Setiap motif yang terwujud dalam goresan canting pada kain batik Yogyakarta adalah sarat akan makna, adalah cerita.
  Hal inilah yang membedakan batik Yogyakarta dengan batik-batik lain, yang menjaga batik Yogyakarta tetap memiliki eksklusivitas dari sebuah mahakarya seni dan budaya Indonesia.</description>
-    <imageFilesStr>berbatik-product-fabric/fabric05.jpg</imageFilesStr>
-    <shopId>batik_wirda_halim</shopId>
-    <localSku>lavita-fabric-30</localSku>
-    <localPrice>875000</localPrice>
+    <imageFilesStr>berbatik-product-fabric/fabric02.jpg</imageFilesStr>
+    <shopId>surya_kencana_batik_art</shopId>
+    <localSku>voila-fabric-44</localSku>
+    <localPrice>603000</localPrice>
+    <shippingPolicy>free</shippingPolicy>
+    <qty>1.0</qty>
     <itemColor>Biru</itemColor>
-    <material>Katun</material>
-    <motif>Manuk Barunding</motif>
-    <signature>OSK</signature>
-    <batikTechnique>Tulis</batikTechnique>
-    <origin>Indramayu</origin>
-    <batikAge>Lawas</batikAge>
-    <condition>Cacat</condition>
+    <material>Sutra</material>
+    <motif>Materos</motif>
+    <signature>Oey Soe Tjoen</signature>
+    <batikTechnique>Tulis Halus</batikTechnique>
+    <origin>Jogja</origin>
+    <batikAge>Kuno</batikAge>
+    <condition>Mulus</condition>
   </Product>
-    ...
+  ...
 </commerce:ProductCatalog>
 
 Output format:
@@ -236,6 +239,8 @@ foreach ($product_xml as $product) {
 			$qty = 1;
 			echo "WARNING: $sku/$name has no qty! Setting to 1";
 		}
+		$imageFilesStr = (string)$product->imageFilesStr;
+		$imageFiles = $imageFilesStr != '' ? explode(',', $imageFilesStr) : array();
 		
 		$additionalData = array();
 		// Select attributes:
@@ -327,7 +332,8 @@ foreach ($product_xml as $product) {
 			'websiteIds'	=> $websiteIds,
 			'urlKey'		=> $urlKey,
 			'qty'			=> $qty),
-			$additionalData);
+			$additionalData,
+			$imageFiles);
 		exit(0);
 	} else if ($product->type == 'configurable') {
 		echo "Create configurable product $sku name: $name set: $set price: $price variants: $variants cats: $cats webs: $webs\n";

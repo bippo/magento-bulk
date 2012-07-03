@@ -20,9 +20,10 @@
  *     'qty'			=> 1
  *   )</pre>
  * @param array $additionalData Additional data, for example values for user-defined attributes, e.g. cost.
- *  @return int Product ID.
+ * @param array $imageFiles List of filenames of product images.
+ * @return int Product ID.
  */
-function createSimpleProduct($productData, $additionalData = array()) {
+function createSimpleProduct($productData, $additionalData = array(), $imageFiles = array()) {
 	// Read parameters
 	$storeId = $productData['storeId'];
 	$setId = $productData['setId'];
@@ -37,6 +38,7 @@ function createSimpleProduct($productData, $additionalData = array()) {
 	$urlKey = $productData['urlKey'];
 	$qty = $productData['qty'];
 	
+	/* @var $product Mage_Catalog_Model_Product */
 	$product = Mage::getModel('catalog/product');
 	$product->setStoreId($storeId)		// is Product.storeId deprecated? seems weird, bcuz Product can be assigned to multiple Websites now
 		->setAttributeSetId($setId)
@@ -60,6 +62,25 @@ function createSimpleProduct($productData, $additionalData = array()) {
 	$stockData = array('qty' => $qty, 'is_in_stock' => 1, 'use_config_manage_stock' => 1, 'use_backorders' => 1);
 	$product->setStockData($stockData);
 
+	foreach ($imageFiles as $imageFile) {
+// 		$filename = $urlKey . '_' . $imageFile;
+// 		$filepath = Mage::getBaseDir('media') . DS . 'import'. DS . $filename;
+// 		copy($imageFile, $filepath);
+		echo "Adding image $imageFile to $sku...";
+		$product->addImageToMediaGallery($imageFile, array('image', 'small_image', 'thumbnail'), false, false);
+		
+		// Set Attribute image
+		$gallery = $product->getData('media_gallery');
+		$lastImage = array_pop($gallery['images']); // the last added image (that is, the one added by the above code)
+		$lastImage['label'] = $sku . ' - ' . $name;
+		$lastImage['position'] = 1;
+		$lastImage['types'] = array('image', 'small_image', 'thumbnail');
+		$lastImage['exclude'] = 0;
+		array_push($gallery['images'], $lastImage);
+		$product->setData('media_gallery', $gallery);
+		echo " OK\n";
+	}
+	
 	$product->save();
 
 	echo "Created product #{$product->getId()}.\n";
@@ -130,11 +151,12 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	);
 	foreach ($variantsData as $variantData) {
 		echo "Creating child product {$variantData['sku']}...";
+		/* @var $product Mage_Catalog_Model_Product */
 		$product = Mage::getModel('catalog/product');
 		$product->setStoreId($storeId)
-		->setAttributeSetId($setId)
-		->setTypeId('simple')
-		->setSku($variantData['sku']);
+			->setAttributeSetId($setId)
+			->setTypeId('simple')
+			->setSku($variantData['sku']);
 		$product->setName($variantData['name']);
 		$product->setShortDescription($summary);
 		$product->setDescription($description);
@@ -172,6 +194,7 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	// Create the parent configurable product
 	echo "Creating parent configurable product {$parentSku}...";
 
+	/* @var $product Mage_Catalog_Model_Product */
 	$product = Mage::getModel('catalog/product');
 	$product->setStoreId(0) //$storeId
 	->setAttributeSetId($setId)
@@ -193,10 +216,10 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	$product->setStockData($stockData);
 	
 	// Set image
-	if ($productImage != "-") {
+	if ($productImage != '' && $productImage != "-") {
 		$image_url = $productImage;
-		$image_type = substr(strrchr($image_url,"."),1);
-		$filename = md5($image_url).'.'.$image_type;
+		$image_type = substr(strrchr($image_url,"."), 1);
+		$filename = md5($image_url) . '.'. $image_type;
 		$filepath = Mage::getBaseDir('media') . DS . 'import'. DS . $filename;
 		file_put_contents($filepath, file_get_contents(trim($image_url)));
 		$product->addImageToMediaGallery($filepath, array('image', 'small_image', 'thumbnail'), true, false);
@@ -204,13 +227,14 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 		// Set Attribute image
 		$gallery = $product->getData('media_gallery');
 		$lastImage = array_pop($gallery['images']);
-		$lastImage['label'] = $parentSku.'-'.$name;
+		$lastImage['label'] = $parentSku . '-' . $name;
 		$lastImage['position'] = 1;
-		$lastImage['types'] = array('image','small_image','thumbnail');
+		$lastImage['types'] = array('image', 'small_image', 'thumbnail');
 		$lastImage['exclude'] = 0;
 		array_push($gallery['images'], $lastImage);
 		$product->setData('media_gallery', $gallery);
 	}
+
 	// set configurable data
 	$product->setConfigurableProductsData($configurableProductsData);
 	$product->setConfigurableAttributesData($configurableAttributesData);
