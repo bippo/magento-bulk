@@ -156,7 +156,7 @@ h3. Delete All Products (WARNING! DANGEROUS)
 
 bc. ./product-clear.php
 
-To delete 832 products on i7-2630QM, takes about ~ real 3m38.357s.
+To delete 832 simple products on i7-2630QM, takes about ~ real 3m38.357s.
 
 h3. Import Products from XML
 
