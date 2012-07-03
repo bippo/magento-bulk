@@ -25,7 +25,7 @@
  */
 function createSimpleProduct($productData, $additionalData = array(), $imageFiles = array()) {
 	// Read parameters
-	$storeId = $productData['storeId'];
+	$storeId = 0; //$productData['storeId']; // must be 0, otherwise upload images label and image,small_image,thumbnail cannot be set :(
 	$setId = $productData['setId'];
 	$sku = $productData['sku'];
 	$name = $productData['name'];
@@ -63,36 +63,50 @@ function createSimpleProduct($productData, $additionalData = array(), $imageFile
 	$product->setStockData($stockData);
 
 	foreach ($imageFiles as $imageFile) {
-		$filename = $urlKey . '_' . basename($imageFile);
-		$tmpFile = Mage::getBaseDir('media') . DS . 'import'. DS . $filename;
-		echo "Copy $imageFile to $tmpFile...";
-		copy($imageFile, $tmpFile);
+// 		$filename = $urlKey . '_' . basename($imageFile);
+// 		$tmpFile = Mage::getBaseDir('media') . DS . 'import'. DS . $filename;
+// 		echo "Copying $imageFile to $tmpFile...";
+// 		copy($imageFile, $tmpFile);
+// 		echo " COPIED\n";
+		
 		echo "Adding image $imageFile to $sku...";
-
 		$productAttributes = $product->getTypeInstance(true)->getSetAttributes($product);
 		if (!isset($productAttributes['media_gallery'])) {
 			throw new Exception("Product $sku has no media_gallery attribute");
 		}
-		$mediaGalleryAttribute = $productAttributes['media_gallery'];
-		/* @var $mediaGalleryAttribute Mage_Catalog_Model_Resource_Eav_Attribute */
-// 		$image = $mediaGalleryAttribute->getBackend()->addImage($product, $imageFile,
-// 			array('image', 'small_image', 'thumbnail'), false, false);
-		$image = $mediaGalleryAttribute->getBackend()->addImage($product, $tmpFile,
-			array('image', 'small_image', 'thumbnail'), true, false);
-		$mediaGalleryAttribute->getBackend()->updateImage($product, $image, array(
-			'label'		=> $sku . ' - ' . $name));
-		
-// 		$product->addImageToMediaGallery($imageFile, array('image', 'small_image', 'thumbnail'), false, false);
+		/* @var $gallery Mage_Catalog_Model_Resource_Eav_Attribute */
+		$gallery = $productAttributes['media_gallery'];
+		/* @var $galleryBackend Mage_Catalog_Model_Product_Attribute_Backend_Media */
+		$galleryBackend = $gallery->getBackend();
+		$image = $galleryBackend->addImage($product, $imageFile,
+			array('image', 'small_image', 'thumbnail'), false, false);
+// 		$image = $galleryBackend->addImage($product, $tmpFile,
+// 			array('image', 'small_image', 'thumbnail'), true, false);
+		echo ' '. $image;
+		$galleryBackend->updateImage($product, $image, array(
+			'label'				=> $sku . '-' . $name,
+			'position'			=> 1,
+			'exclude'			=> 0,
+		));
+// 		$galleryBackend->setMediaAttribute($product, array('image', 'small_image', 'thumbnail'), $image);
+				
+// 		$product->addImageToMediaGallery($imageFile, array('image', 'small_image', 'thumbnail'),
+// 			false, false);
 		
 // 		// Set Attribute image
 // 		$gallery = $product->getData('media_gallery');
 // 		$lastImage = array_pop($gallery['images']); // the last added image (that is, the one added by the above code)
 // 		$lastImage['label'] = $sku . ' - ' . $name;
+// 		$lastImage['label_default'] = $sku . ' - ' . $name;
 // 		$lastImage['position'] = 1;
-// 		$lastImage['types'] = array('image', 'small_image', 'thumbnail');
+// 		$lastImage['position_default'] = 1;
+// // 		$lastImage['types'] = array('image', 'small_image', 'thumbnail');
 // 		$lastImage['exclude'] = 0;
+// 		$lastImage['exclude_default'] = 0;
 // 		array_push($gallery['images'], $lastImage);
+// 		var_dump($gallery);
 // 		$product->setData('media_gallery', $gallery);
+
 		echo " OK\n";
 	}
 	

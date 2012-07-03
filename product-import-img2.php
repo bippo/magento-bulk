@@ -317,7 +317,7 @@ foreach ($product_xml as $product) {
 		if ($product->waistSize != '')
 			$additionalData['waistSize'] = (string)$product->waistSize;
 
-		var_dump($additionalData);
+// 		var_dump($additionalData);
 		echo "Create simple product $sku name: $name price: $price qty: $qty cats: $cats webs: $webs\n";
 		createSimpleProduct(array(
 			'storeId'		=> $storeId,
@@ -334,7 +334,6 @@ foreach ($product_xml as $product) {
 			'qty'			=> $qty),
 			$additionalData,
 			$imageFiles);
-		exit(0);
 	} else if ($product->type == 'configurable') {
 		echo "Create configurable product $sku name: $name set: $set price: $price variants: $variants cats: $cats webs: $webs\n";
 		$variantCodes = explode(',', $variants);
