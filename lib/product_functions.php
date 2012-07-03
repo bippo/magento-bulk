@@ -63,21 +63,36 @@ function createSimpleProduct($productData, $additionalData = array(), $imageFile
 	$product->setStockData($stockData);
 
 	foreach ($imageFiles as $imageFile) {
-// 		$filename = $urlKey . '_' . $imageFile;
-// 		$filepath = Mage::getBaseDir('media') . DS . 'import'. DS . $filename;
-// 		copy($imageFile, $filepath);
+		$filename = $urlKey . '_' . basename($imageFile);
+		$tmpFile = Mage::getBaseDir('media') . DS . 'import'. DS . $filename;
+		echo "Copy $imageFile to $tmpFile...";
+		copy($imageFile, $tmpFile);
 		echo "Adding image $imageFile to $sku...";
-		$product->addImageToMediaGallery($imageFile, array('image', 'small_image', 'thumbnail'), false, false);
+
+		$productAttributes = $product->getTypeInstance(true)->getSetAttributes($product);
+		if (!isset($productAttributes['media_gallery'])) {
+			throw new Exception("Product $sku has no media_gallery attribute");
+		}
+		$mediaGalleryAttribute = $productAttributes['media_gallery'];
+		/* @var $mediaGalleryAttribute Mage_Catalog_Model_Resource_Eav_Attribute */
+// 		$image = $mediaGalleryAttribute->getBackend()->addImage($product, $imageFile,
+// 			array('image', 'small_image', 'thumbnail'), false, false);
+		$image = $mediaGalleryAttribute->getBackend()->addImage($product, $tmpFile,
+			array('image', 'small_image', 'thumbnail'), true, false);
+		$mediaGalleryAttribute->getBackend()->updateImage($product, $image, array(
+			'label'		=> $sku . ' - ' . $name));
 		
-		// Set Attribute image
-		$gallery = $product->getData('media_gallery');
-		$lastImage = array_pop($gallery['images']); // the last added image (that is, the one added by the above code)
-		$lastImage['label'] = $sku . ' - ' . $name;
-		$lastImage['position'] = 1;
-		$lastImage['types'] = array('image', 'small_image', 'thumbnail');
-		$lastImage['exclude'] = 0;
-		array_push($gallery['images'], $lastImage);
-		$product->setData('media_gallery', $gallery);
+// 		$product->addImageToMediaGallery($imageFile, array('image', 'small_image', 'thumbnail'), false, false);
+		
+// 		// Set Attribute image
+// 		$gallery = $product->getData('media_gallery');
+// 		$lastImage = array_pop($gallery['images']); // the last added image (that is, the one added by the above code)
+// 		$lastImage['label'] = $sku . ' - ' . $name;
+// 		$lastImage['position'] = 1;
+// 		$lastImage['types'] = array('image', 'small_image', 'thumbnail');
+// 		$lastImage['exclude'] = 0;
+// 		array_push($gallery['images'], $lastImage);
+// 		$product->setData('media_gallery', $gallery);
 		echo " OK\n";
 	}
 	
@@ -197,9 +212,9 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	/* @var $product Mage_Catalog_Model_Product */
 	$product = Mage::getModel('catalog/product');
 	$product->setStoreId(0) //$storeId
-	->setAttributeSetId($setId)
-	->setTypeId('configurable')
-	->setSku($parentSku);
+		->setAttributeSetId($setId)
+		->setTypeId('configurable')
+		->setSku($parentSku);
 	$product->setName($name);
 	$product->setShortDescription($summary);
 	$product->setDescription($description);
