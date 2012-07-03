@@ -16,6 +16,7 @@
  *     'price'			=> 98000.0,
  *     'categoryIds'	=> array(4, 5),
  *     'websiteIds'		=> array(1, 2),
+ *     'urlKey'			=> 'zibalabel-t01',
  *     'qty'			=> 1
  *   )</pre>
  * @param array $additionalData Additional data, for example values for user-defined attributes.
@@ -33,8 +34,9 @@ function createSimpleProduct($productData, $additionalData = array()) {
 	$price = $productData['price'];
 	$categoryIds = $productData['categoryIds'];
 	$websiteIds = $productData['websiteIds'];
+	$urlKey = $productData['urlKey'];
 	$qty = $productData['qty'];
-
+	
 	$product = Mage::getModel('catalog/product');
 	$product->setStoreId($storeId)		// is Product.storeId deprecated? seems weird, bcuz Product can be assigned to multiple Websites now
 		->setAttributeSetId($setId)
@@ -50,6 +52,7 @@ function createSimpleProduct($productData, $additionalData = array()) {
 	$product->setCategoryIds($categoryIds);
 	$product->setTaxClassId(0); // 0=None 2=Taxable Goods 4=Shipping
 	$product->setWebsiteIds($websiteIds);
+	$product->setUrlkey($urlKey);
 	
 	$product->addData($additionalData);
 

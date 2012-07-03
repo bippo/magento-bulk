@@ -196,15 +196,19 @@ foreach ($product_xml as $product) {
 	$cats = (string)$product->categories;
 	$webs = (string)$product->webs;
 	$productImage = (string)$product->images;
+	$urlKey = (string)$product->slug;
 	
 	// Determine website IDs
 	$webCodes = !empty($webs) && $webs != '-' ? explode(',', $webs) : array();
-	$websiteIds = array();
-	var_dump($webCodes);
-	foreach ($webCodes as $webCode) {
-		if (!isset($websiteLookup[$webCode]))
+	// if 'webs' if empty, means all websites
+	$websiteIds = array_values($websiteLookup);
+	if (!empty($webCodes)) {
+		$websiteIds = array();
+		foreach ($webCodes as $webCode) {
+			if (!isset($websiteLookup[$webCode]))
 			throw new Exception("Cannot find website '$webCode'");
-		$websiteIds[] = $websiteLookup[$webCode];
+			$websiteIds[] = $websiteLookup[$webCode];
+		}
 	}
 	echo 'Website IDs: '. join(' ', $websiteIds) ."\n";
 	
@@ -229,6 +233,7 @@ foreach ($product_xml as $product) {
 	if ($product->type == 'simple') {
 		$qty = (string)$product->qty;
 		if ($qty == '') {
+			$qty = 1;
 			echo "WARNING: $sku/$name has no qty! Setting to 1";
 		}
 		
@@ -318,7 +323,8 @@ foreach ($product_xml as $product) {
 			'price'			=> $price,
 			'categoryIds'	=> $categoryIds,
 			'websiteIds'	=> $websiteIds,
-			'qty'			=> 1),
+			'urlKey'		=> $urlKey,
+			'qty'			=> $qty),
 			$additionalData);
 		exit(0);
 	} else if ($product->type == 'configurable') {
