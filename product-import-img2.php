@@ -253,9 +253,9 @@ foreach ($product_xml as $product) {
 			$additionalData['batik_technique'] = $optionLookup['batik_technique'][(string)$product->batikTechnique];
 		if ($product->condition != '')
 			$additionalData['condition'] = $optionLookup['condition'][(string)$product->condition];
-		if ($product->item_color != '')
+		if ($product->itemColor != '')
 			$additionalData['item_color'] = $optionLookup['item_color'][(string)$product->itemColor];
-		if ($product->item_size != '')
+		if ($product->itemSize != '')
 			$additionalData['item_size'] = $optionLookup['item_size'][(string)$product->itemSize];
 		if ($product->leather != '')
 			$additionalData['leather'] = $optionLookup['leather'][(string)$product->leather];
