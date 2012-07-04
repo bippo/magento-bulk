@@ -254,6 +254,7 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 // 		$product->addImageToMediaGallery($filepath, array('image', 'small_image', 'thumbnail'), true, false);
 
 		$image_url = $productImage;
+		$catalogImg = str_replace(" _ ", " ", $image_url);
 		$path_img = IMG_PATH.$catalogImg;
 		$product->addImageToMediaGallery($path_img, array('image', 'small_image', 'thumbnail'), false, false);
 		
