@@ -246,12 +246,16 @@ function createConfigurableProduct($modelData, $productData, $variantsData) {
 	
 	// Set image
 	if ($productImage != '' && $productImage != "-") {
+// 		$image_url = $productImage;
+// 		$image_type = substr(strrchr($image_url,"."), 1);
+// 		$filename = md5($image_url) . '.'. $image_type;
+// 		$filepath = Mage::getBaseDir('media') . DS . 'import'. DS . $filename;
+// 		file_put_contents($filepath, file_get_contents(trim($image_url)));
+// 		$product->addImageToMediaGallery($filepath, array('image', 'small_image', 'thumbnail'), true, false);
+
 		$image_url = $productImage;
-		$image_type = substr(strrchr($image_url,"."), 1);
-		$filename = md5($image_url) . '.'. $image_type;
-		$filepath = Mage::getBaseDir('media') . DS . 'import'. DS . $filename;
-		file_put_contents($filepath, file_get_contents(trim($image_url)));
-		$product->addImageToMediaGallery($filepath, array('image', 'small_image', 'thumbnail'), true, false);
+		$path_img = IMG_PATH.$catalogImg;
+		$product->addImageToMediaGallery($path_img, array('image', 'small_image', 'thumbnail'), false, false);
 		
 		// Set Attribute image
 		$gallery = $product->getData('media_gallery');
