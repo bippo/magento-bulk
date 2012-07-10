@@ -126,7 +126,7 @@ $categoryLookup = array();
 $defaultCategoryIds = array();
 foreach ($categories as $cat) {
 	/* @var $cat Mage_Catalog_Model_Category */
-	if ($cat->getUrlKey() !== '') {
+	if ($cat->getUrlKey() != '') {
 		$urlKeyPath = $cat->getUrlKey();
 		// prepend parent url keys (if any)
 		$current = $cat->getParentCategory();
